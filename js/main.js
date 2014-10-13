@@ -1,7 +1,5 @@
 (function() {
 
-    var query = window.location;
-
     var hb = {
 
         API_URL: 'https://hummingbirdv1.p.mashape.com',
@@ -47,5 +45,27 @@
 
     };
 
+    // MAIN
+
+    // parse query string
+    var query = {};
+    window.location.href.slice(window.location.href.lastIndexOf('?') + 1)
+    	.split('&')
+    	.forEach(function(pair) {
+    		var p = pair.split('=');
+	    	query[p[0]] = p[1];
+	    });
+
+    // if possible get usernames from query string
+	var user1 = query['user1'],
+		user2 = query['user2'];
+
+	// setup references to input elements
+    var txtUser1 = document.getElementById('txtUser1'),
+    	txtUser2 = document.getElementById('txtUser2');
+
+    // initialize textboxes if possible
+    txtUser1.value = user1 || '';
+    txtUser2.value = user2 || '';
 
 }());
