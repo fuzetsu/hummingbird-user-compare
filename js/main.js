@@ -99,11 +99,11 @@
         }
         // calculate means
         rating1 = rating2 = dif = '-';
-        if (rating1Count !== 0)
+        if (rating1Count > 0)
             rating1 = rating1Sum / rating1Count;
-        if (rating2Count !== 0)
+        if (rating2Count > 0)
             rating2 = rating2Sum / rating2Count;
-        if (difCount !== 0)
+        if (difCount > 0)
             dif = difSum / difCount;
 
         html += '<tr><td>Mean Values (' + animeInCommon.length + ' total)</td><td>' + rating1.toFixed(2) + '</td><td>' + rating2.toFixed(2) + '</td><td>' + dif.toFixed(2) + '</td></tr></table>';
