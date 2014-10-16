@@ -68,7 +68,7 @@
 
         // sort the array by the anime's title
         animeInCommon.sort(function(a, b) {
-            return a[0].title < b[0].title ? -1 : (a[0].title > b[0].title ? 1 : 0);
+            return a[0].title.toUpperCase() < b[0].title.toUpperCase() ? -1 : (a[0].title.toUpperCase() > b[0].title.toUpperCase() ? 1 : 0);
         });
 
         for (var i = 0; i < animeInCommon.length; i++) {
