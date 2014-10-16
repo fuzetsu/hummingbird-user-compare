@@ -78,7 +78,8 @@
             anime1 = animeInCommon[i][0];
             anime2 = animeInCommon[i][1];
 
-            rating1 = rating2 = dif = '-';
+            rating1 = rating2 = '-';
+            dif = '';
             if (anime1.rating !== null && anime2.rating !== null) {
                 dif = anime1.rating - anime2.rating;
                 difCount++;
@@ -98,7 +99,8 @@
             html += '<tr><td>' + anime1.title + '</td><td>' + rating1 + '</td><td>' + rating2 + '</td><td>' + dif + '</td></tr>';
         }
         // calculate means
-        rating1 = rating2 = dif = '-';
+        rating1 = rating2 = '-';
+        dif = '';
         if (rating1Count > 0)
             rating1 = rating1Sum / rating1Count;
         if (rating2Count > 0)
