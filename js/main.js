@@ -57,20 +57,18 @@
 
     btnCompare.addEventListener('click', function(){
         if (txtUser1.value.trim() && txtUser2.value.trim()) {
+            outputDiv.innerHTML = '';
             // Can't compare same user
             if (txtUser1.value.trim() === txtUser2.value.trim()) {
                 outputDiv.innerHTML = "Can't compare the same user";
                 return;
             }
 
-            hb.getAnimeList(txtUser1.value.trim()).done(function(list1) { // got list for first user
-                hb.getAnimeList(txtUser2.value.trim()).done(function(list2) { // got list for second user
-                    compare(list1, list2)
-                }, function() { // failed to get list for second user
-                    outputDiv.innerHTML = 'Failed to get list data for ' + txtUser2.value.trim();
-                });
-            }, function() { // failed to get list for first user
-                outputDiv.innerHTML = 'Failed to get list data for ' + txtUser1.value.trim();
+            // get both lists and send them to compare
+            Promise.all([hb.getAnimeList(txtUser1.value.trim()), hb.getAnimeList(txtUser2.value.trim())]).done(function(lists) {
+                compare(lists[0], lists[1]);
+            }, function() {
+                outputDiv.innerHTML = 'Failed to get list data';
             });
         }
     });
