@@ -36,6 +36,7 @@
             	.sendAPIRequest('get', '/users/' + username + '/library', null)
             	.map(function(entry) {
             		return {
+                        slug: entry.anime.slug,
             			title: entry.anime.title,
             			status: entry.status,
             			rating: self.c10p(entry.rating.value)
@@ -46,6 +47,33 @@
     };
 
     var compare = function(list1, list2) {
+        var animeInCommon = [], anime1, anime2;
+        for (var i = 0; i < list1.length; i++) { // loop through the first list
+            anime1 = list1[i];
+             // we want to ignore the plan to watch list
+            if (anime1.status == 'plan-to-watch')
+                continue;
+            for (var j = 0; j < list2.length; j++) { // loop through the second list
+                anime2 = list2[j];
+                if (anime1.slug === anime2.slug) { // we found a match
+                     // ignore plan to watch
+                    if (anime2.status !== 'plan-to-watch') {
+                        // this anime is in common. add to the array
+                        animeInCommon.push([anime1, anime2]);
+                    }
+                    break;
+                }
+            }
+        }
+
+        // sort the array by the anime's title
+        animeInCommon.sort(function(a, b) {
+            return a[0].title < b[0].title ? -1 : (a[0].title > b[0].title ? 1 : 0);
+        });
+
+        for (var i = 0; i < animeInCommon.length; i++) {
+            console.log(animeInCommon[i][0].title);
+        }
     }
 
     // MAIN
@@ -57,7 +85,7 @@
 
     btnCompare.addEventListener('click', function(){
         if (txtUser1.value.trim() && txtUser2.value.trim()) {
-            outputDiv.innerHTML = '';
+            outputDiv.innerHTML = 'Processing...';
             // Can't compare same user
             if (txtUser1.value.trim() === txtUser2.value.trim()) {
                 outputDiv.innerHTML = "Can't compare the same user";
