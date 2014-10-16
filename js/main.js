@@ -71,9 +71,44 @@
             return a[0].title.toUpperCase() < b[0].title.toUpperCase() ? -1 : (a[0].title.toUpperCase() > b[0].title.toUpperCase() ? 1 : 0);
         });
 
+        //generate html
+        var html = '<table><tr><th>Title</th><th>' + user1 + '\'s Rating</th><th>' + user2 + '\'s Rating</th><th>Difference</th></tr>';
+        var dif, difCount = 0, difSum = 0, rating1, rating1Count = 0, rating1Sum = 0, rating2, rating2Sum = 0, rating2Count = 0;
         for (var i = 0; i < animeInCommon.length; i++) {
-            console.log(animeInCommon[i][0].title);
+            anime1 = animeInCommon[i][0];
+            anime2 = animeInCommon[i][1];
+
+            rating1 = rating2 = dif = '-';
+            if (anime1.rating !== null && anime2.rating !== null) {
+                dif = anime1.rating - anime2.rating;
+                difCount++;
+                difSum += dif;
+            }
+            if (anime1.rating !== null) {
+                rating1 = anime1.rating;
+                rating1Count++;
+                rating1Sum += rating1;
+            }
+            if (anime2.rating !== null) {
+                rating2 = anime2.rating;
+                rating2Count++;
+                rating2Sum += rating2;
+            }
+
+            html += '<tr><td>' + anime1.title + '</td><td>' + rating1 + '</td><td>' + rating2 + '</td><td>' + dif + '</td></tr>';
         }
+        // calculate means
+        rating1 = rating2 = dif = '-';
+        if (rating1Count !== 0)
+            rating1 = rating1Sum / rating1Count;
+        if (rating2Count !== 0)
+            rating2 = rating2Sum / rating2Count;
+        if (difCount !== 0)
+            dif = difSum / difCount;
+
+        html += '<tr><td>Mean Values (' + animeInCommon.length + ' total)</td><td>' + rating1.toFixed(2) + '</td><td>' + rating2.toFixed(2) + '</td><td>' + dif.toFixed(2) + '</td></tr></table>';
+
+        outputDiv.innerHTML = html;
     }
 
     // MAIN
@@ -83,17 +118,21 @@
         btnCompare = document.getElementById('btnCompare'),
         outputDiv = document.getElementById('outputDiv');
 
+    var user1, user2;
+
     btnCompare.addEventListener('click', function(){
-        if (txtUser1.value.trim() && txtUser2.value.trim()) {
-            outputDiv.innerHTML = 'Processing...';
+        user1 = txtUser1.value.trim();
+        user2 = txtUser2.value.trim();
+        if (user1 && user2) {
             // Can't compare same user
-            if (txtUser1.value.trim() === txtUser2.value.trim()) {
+            if (user1 === user2) {
                 outputDiv.innerHTML = "Can't compare the same user";
                 return;
             }
 
+            outputDiv.innerHTML = 'Processing...';
             // get both lists and send them to compare
-            Promise.all([hb.getAnimeList(txtUser1.value.trim()), hb.getAnimeList(txtUser2.value.trim())]).done(function(lists) {
+            Promise.all([hb.getAnimeList(user1), hb.getAnimeList(user2)]).done(function(lists) {
                 compare(lists[0], lists[1]);
             }, function() {
                 outputDiv.innerHTML = 'Failed to get list data';
@@ -111,8 +150,8 @@
 	    });
 
     // if possible get usernames from query string
-	var user1 = query['user1'],
-		user2 = query['user2'];
+	user1 = query['user1'];
+	user2 = query['user2'];
 
     // initialize textboxes if possible
     txtUser1.value = user1 || '';
