@@ -80,17 +80,17 @@
 
             rating1 = rating2 = '-';
             dif = '';
-            if (anime1.rating !== null && anime2.rating !== null) {
+            if (anime1.rating && anime2.rating) {
                 dif = anime1.rating - anime2.rating;
                 difCount++;
                 difSum += dif;
             }
-            if (anime1.rating !== null) {
+            if (anime1.rating) {
                 rating1 = anime1.rating;
                 rating1Count++;
                 rating1Sum += rating1;
             }
-            if (anime2.rating !== null) {
+            if (anime2.rating) {
                 rating2 = anime2.rating;
                 rating2Count++;
                 rating2Sum += rating2;
