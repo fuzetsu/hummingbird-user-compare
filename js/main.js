@@ -16,8 +16,8 @@
 
             return new Promise(function(resolve, reject) {
                 var xhr = new XMLHttpRequest();
-                xhr.responseType = 'json';
                 xhr.open(method, self.API_URL + url, true);
+                xhr.responseType = 'json';
                 xhr.addEventListener('error', reject);
                 xhr.addEventListener('load', function() {
                 	resolve(xhr.response);
@@ -45,7 +45,35 @@
 
     };
 
+    var compare = function(list1, list2) {
+    }
+
     // MAIN
+    // setup references to input elements
+    var txtUser1 = document.getElementById('txtUser1'),
+        txtUser2 = document.getElementById('txtUser2'),
+        btnCompare = document.getElementById('btnCompare'),
+        outputDiv = document.getElementById('outputDiv');
+
+    btnCompare.addEventListener('click', function(){
+        if (txtUser1.value.trim() && txtUser2.value.trim()) {
+            // Can't compare same user
+            if (txtUser1.value.trim() === txtUser2.value.trim()) {
+                outputDiv.innerHTML = "Can't compare the same user";
+                return;
+            }
+
+            hb.getAnimeList(txtUser1.value.trim()).done(function(list1) { // got list for first user
+                hb.getAnimeList(txtUser2.value.trim()).done(function(list2) { // got list for second user
+                    compare(list1, list2)
+                }, function() { // failed to get list for second user
+                    outputDiv.innerHTML = 'Failed to get list data for ' + txtUser2.value.trim();
+                });
+            }, function() { // failed to get list for first user
+                outputDiv.innerHTML = 'Failed to get list data for ' + txtUser1.value.trim();
+            });
+        }
+    });
 
     // parse query string
     var query = {};
@@ -60,12 +88,11 @@
 	var user1 = query['user1'],
 		user2 = query['user2'];
 
-	// setup references to input elements
-    var txtUser1 = document.getElementById('txtUser1'),
-    	txtUser2 = document.getElementById('txtUser2');
-
     // initialize textboxes if possible
     txtUser1.value = user1 || '';
     txtUser2.value = user2 || '';
 
+    //if there are values in both text boxes automatically run the compare
+    if (txtUser1.value.trim() && txtUser2.value.trim())
+        btnCompare.click();
 }());
