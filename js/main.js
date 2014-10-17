@@ -72,7 +72,7 @@
         });
 
         //generate html
-        var html = '<table><tr><th>Title</th><th>' + user1 + '\'s Rating</th><th>' + user2 + '\'s Rating</th><th>Difference</th></tr>';
+        var html = '<table class="sortable" id="outputTable"><thead><tr><th>Title</th><th>' + user1 + '\'s Rating</th><th>' + user2 + '\'s Rating</th><th>Difference</th></tr></thead><tbody>';
         var dif, difCount = 0, difSum = 0, rating1, rating1Count = 0, rating1Sum = 0, rating2, rating2Sum = 0, rating2Count = 0;
         for (var i = 0; i < animeInCommon.length; i++) {
             anime1 = animeInCommon[i][0];
@@ -108,9 +108,11 @@
         if (difCount > 0)
             dif = difSum / difCount;
 
-        html += '<tr><td>Mean Values (' + animeInCommon.length + ' total)</td><td>' + rating1.toFixed(2) + '</td><td>' + rating2.toFixed(2) + '</td><td>' + dif.toFixed(2) + '</td></tr></table>';
-
+        html += '<tr><td>Mean Values (' + animeInCommon.length + ' total)</td><td>' + rating1.toFixed(2) + '</td><td>' + rating2.toFixed(2) + '</td><td>' + dif.toFixed(2) + '</td></tr></tbody></table>';
         outputDiv.innerHTML = html;
+
+        // make table sortable
+        sorttable.makeSortable(document.getElementById('outputTable'));
     }
 
     // MAIN
