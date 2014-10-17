@@ -66,11 +66,6 @@
             }
         }
 
-        // sort the array by the anime's title
-        animeInCommon.sort(function(a, b) {
-            return a[0].title.toUpperCase() < b[0].title.toUpperCase() ? -1 : (a[0].title.toUpperCase() > b[0].title.toUpperCase() ? 1 : 0);
-        });
-
         //generate html
         var html = '<table class="sortable" id="outputTable"><thead><tr><th>Title</th><th>' + user1 + '\'s Rating</th><th>' + user2 + '\'s Rating</th><th>Difference</th></tr></thead><tbody>';
         var dif, difCount = 0, difSum = 0, rating1, rating1Count = 0, rating1Sum = 0, rating2, rating2Sum = 0, rating2Count = 0;
@@ -112,7 +107,10 @@
         outputDiv.innerHTML = html;
 
         // make table sortable
-        sorttable.makeSortable(document.getElementById('outputTable'));
+        var table = document.getElementById('outputTable');
+        sorttable.makeSortable(table);
+        // sort table
+        sorttable.innerSortFunction.apply(table.getElementsByTagName('th')[0], []);
     }
 
     // MAIN
