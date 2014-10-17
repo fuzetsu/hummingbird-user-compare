@@ -67,7 +67,7 @@
         }
 
         //generate html
-        var html = '<table class="sortable" id="outputTable"><thead><tr><th>Title</th><th>' + user1 + '\'s Rating</th><th>' + user2 + '\'s Rating</th><th>Difference</th></tr></thead><tbody>';
+        var html = '<table class="sortable" id="outputTable"><thead><tr><th>Title</th><th>' + user1 + '\'s Rating</th><th>' + user2 + '\'s Rating</th><th class="sorttable_nosort">Difference</th></tr></thead><tbody>';
         var dif, difCount = 0, difSum = 0, rating1, rating1Count = 0, rating1Sum = 0, rating2, rating2Sum = 0, rating2Count = 0;
         for (var i = 0; i < animeInCommon.length; i++) {
             anime1 = animeInCommon[i][0];
