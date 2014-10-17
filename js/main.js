@@ -103,7 +103,7 @@
         if (difCount > 0)
             dif = difSum / difCount;
 
-        html += '<tr><td>Mean Values (' + animeInCommon.length + ' total)</td><td>' + rating1.toFixed(2) + '</td><td>' + rating2.toFixed(2) + '</td><td>' + dif.toFixed(2) + '</td></tr></tbody></table>';
+        html += '<tr></tbody><tfoot><td>Mean Values (' + animeInCommon.length + ' total)</td><td>' + rating1.toFixed(2) + '</td><td>' + rating2.toFixed(2) + '</td><td>' + dif.toFixed(2) + '</td></tr></tfoot></table>';
         outputDiv.innerHTML = html;
 
         // make table sortable
