@@ -48,7 +48,7 @@
 
             return self
                 .sendAPIRequest('get', '/anime/' + slug + '?title_language_preference=' + titleLanguage, null)
-                .map(function(anime) {
+                .then(function(anime) {
                     return {
                         slug: anime.slug,
                         title: anime.title
@@ -60,86 +60,81 @@
     var compare = function(list1, list2) {
         // get title language preference
         var titles = document.getElementById('ddlTitles').value;
-        if (titles === '0')
-            titles = 'canonical';
-        else if (titles === '1')
-            titles = 'english';
-        else if (titles === '2')
-            titles = 'romanized';
 
-        var animeInCommon = [],
-            anime1, anime2, animeTitle;
-        for (var i = 0; i < list1.length; i++) { // loop through the first list
-            anime1 = list1[i];
+        var animeInCommon = [];
+
+        list1.forEach(function(anime1) { // loop through the first list
             // we want to ignore the plan to watch list
-            if (anime1.status == 'plan-to-watch')
-                continue;
-            for (var j = 0; j < list2.length; j++) { // loop through the second list
-                anime2 = list2[j];
+            if (anime1.status === 'plan-to-watch') return;
+            list2.some(function(anime2) { // lopo through the second list
                 if (anime1.slug === anime2.slug) { // we found a match
-                    // ignore plan to watch
                     if (anime2.status !== 'plan-to-watch') {
-                        animeTitle = hb.getAnime(anime1.slug, titles);
-                        anime1.title = animeTitle.title;
-                        anime2.title = animeTitle.title;
-                        // this anime is in common. add to the array
-                        animeInCommon.push([anime1, anime2]);
+                        if (titles === 'canonical') {
+                            animeInCommon.push([anime1, anime2]);
+                        } else {
+                            animeInCommon.push(hb.getAnime(anime1.slug, titles).then(function(aTitle) {
+                                anime1.title = anime2.title = aTitle.title;
+                                return [anime1, anime2];
+                            }));
+                        }
                     }
-                    break;
+                    return true; // start looking for next match
                 }
+            });
+        });
+
+        Promise.all(animeInCommon).done(function(common) {
+            //generate html
+            var html = '<table class="sortable" id="outputTable"><thead><tr><th>Title</th><th>' + user1 + '\'s Rating</th><th>' + user2 + '\'s Rating</th><th class="sorttable_nosort">Difference</th></tr></thead><tbody>';
+            var dif, difCount = 0,
+                difSum = 0,
+                rating1, rating1Count = 0,
+                rating1Sum = 0,
+                rating2, rating2Sum = 0,
+                rating2Count = 0;
+            for (var i = 0; i < common.length; i++) {
+                anime1 = common[i][0];
+                anime2 = common[i][1];
+
+                rating1 = rating2 = '-';
+                dif = '';
+                if (anime1.rating && anime2.rating) {
+                    dif = anime1.rating - anime2.rating;
+                    difCount++;
+                    difSum += dif;
+                }
+                if (anime1.rating) {
+                    rating1 = anime1.rating;
+                    rating1Count++;
+                    rating1Sum += rating1;
+                }
+                if (anime2.rating) {
+                    rating2 = anime2.rating;
+                    rating2Count++;
+                    rating2Sum += rating2;
+                }
+
+                html += '<tr><td>' + anime1.title + '</td><td>' + rating1 + '</td><td>' + rating2 + '</td><td>' + dif + '</td></tr>';
             }
-        }
-
-        //generate html
-        var html = '<table class="sortable" id="outputTable"><thead><tr><th>Title</th><th>' + user1 + '\'s Rating</th><th>' + user2 + '\'s Rating</th><th class="sorttable_nosort">Difference</th></tr></thead><tbody>';
-        var dif, difCount = 0,
-            difSum = 0,
-            rating1, rating1Count = 0,
-            rating1Sum = 0,
-            rating2, rating2Sum = 0,
-            rating2Count = 0;
-        for (var i = 0; i < animeInCommon.length; i++) {
-            anime1 = animeInCommon[i][0];
-            anime2 = animeInCommon[i][1];
-
+            // calculate means
             rating1 = rating2 = '-';
             dif = '';
-            if (anime1.rating && anime2.rating) {
-                dif = anime1.rating - anime2.rating;
-                difCount++;
-                difSum += dif;
-            }
-            if (anime1.rating) {
-                rating1 = anime1.rating;
-                rating1Count++;
-                rating1Sum += rating1;
-            }
-            if (anime2.rating) {
-                rating2 = anime2.rating;
-                rating2Count++;
-                rating2Sum += rating2;
-            }
+            if (rating1Count > 0)
+                rating1 = rating1Sum / rating1Count;
+            if (rating2Count > 0)
+                rating2 = rating2Sum / rating2Count;
+            if (difCount > 0)
+                dif = difSum / difCount;
 
-            html += '<tr><td>' + anime1.title + '</td><td>' + rating1 + '</td><td>' + rating2 + '</td><td>' + dif + '</td></tr>';
-        }
-        // calculate means
-        rating1 = rating2 = '-';
-        dif = '';
-        if (rating1Count > 0)
-            rating1 = rating1Sum / rating1Count;
-        if (rating2Count > 0)
-            rating2 = rating2Sum / rating2Count;
-        if (difCount > 0)
-            dif = difSum / difCount;
+            html += '<tr></tbody><tfoot><td>Mean Values (' + common.length + ' total)</td><td>' + rating1.toFixed(2) + '</td><td>' + rating2.toFixed(2) + '</td><td>' + dif.toFixed(2) + '</td></tr></tfoot></table>';
+            outputDiv.innerHTML = html;
 
-        html += '<tr></tbody><tfoot><td>Mean Values (' + animeInCommon.length + ' total)</td><td>' + rating1.toFixed(2) + '</td><td>' + rating2.toFixed(2) + '</td><td>' + dif.toFixed(2) + '</td></tr></tfoot></table>';
-        outputDiv.innerHTML = html;
-
-        // make table sortable
-        var table = document.getElementById('outputTable');
-        sorttable.makeSortable(table);
-        // sort table
-        sorttable.innerSortFunction.apply(table.getElementsByTagName('th')[0], []);
+            // make table sortable
+            var table = document.getElementById('outputTable');
+            sorttable.makeSortable(table);
+            // sort table
+            sorttable.innerSortFunction.apply(table.getElementsByTagName('th')[0], []);
+        });
     }
 
     var getCookie = function(cname) {
