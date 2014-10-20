@@ -1,23 +1,27 @@
 .header {
-	text-align: center;
+    text-align: center;
 }
-
 .content table {
-	margin: auto;
+    margin: auto;
 }
-
 .content th {
-	cursor: pointer;
+    cursor: pointer;
+    -webkit-user-select: none;
+    /* Chrome/Safari */
+    
+    -moz-user-select: none;
+    /* Firefox */
+    
+    -ms-user-select: none;
+    /* IE10+ */
+    /* Rules below not implemented in browsers yet */
+    
+    -o-user-select: none;
+    user-select: none;
 }
-
 .content > div {
-	margin: auto;
+    margin: auto;
 }
-
-.loading-indicator {
-
-}
-
 .tac {
-	text-align: center;
+    text-align: center;
 }
