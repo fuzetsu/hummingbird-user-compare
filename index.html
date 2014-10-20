@@ -3,23 +3,31 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hummingbird User Comparer</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/grids-responsive-min.css">
+    <link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
-    <h1>Hummingbird User Comparer</h1>
-    <div>
-        <input id="txtUser1" type="text" size="10" placeholder="User 1">
-        <input id="txtUser2" type="text" size="10" placeholder="User 2">
-        <button id="btnCompare">Compare</button>
-        <label>Titles:</label>
-        <select id="ddlTitles">
-            <option value="canonical" selected>Canonical</option>
-            <option value="english">English</option>
-            <option value="romanized">Romanized</option>
-        </select>
+    <h1 class="header">Hummingbird User Comparer</h1>
+    <div class="content">
+        <form class="pure-form tac" id="formCompare">
+            <input id="txtUser1" type="text" size="10" placeholder="User 1">
+            <input id="txtUser2" type="text" size="10" placeholder="User 2">
+            <select id="ddlTitles" title="Title Format">
+                <option value="" disabled>Title Format</option>
+                <option value="canonical" selected>Canonical</option>
+                <option value="english">English</option>
+                <option value="romanized">Romanized</option>
+            </select>
+            <button class="pure-button pure-button-primary" id="btnCompare" type="submit">Compare</button>
+        </form>
+        <br>
+        <div class="tac"><img src="img/loading.gif" class="loading-indicator" alt="loading" hidden></div>
+        <div id="outputDiv"></div>
     </div>
-    <div id="outputDiv"></div>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/bluebird/1.2.2/bluebird.min.js"></script>
     <script src="js/sorttable.js"></script>
     <script src="js/main.js"></script>

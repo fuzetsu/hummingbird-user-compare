@@ -83,9 +83,9 @@
             });
         });
 
-        Promise.all(animeInCommon).done(function(common) {
+        return Promise.all(animeInCommon).then(function(common) {
             //generate html
-            var html = '<table class="sortable" id="outputTable"><thead><tr><th>Title</th><th>' + user1 + '\'s Rating</th><th>' + user2 + '\'s Rating</th><th class="sorttable_nosort">Difference</th></tr></thead><tbody>';
+            var html = '<table class="pure-table pure-table-striped sortable" id="outputTable"><thead><tr><th>Title</th><th>' + user1 + '\'s Rating</th><th>' + user2 + '\'s Rating</th><th class="sorttable_nosort">Difference</th></tr></thead><tbody>';
             var dif, difCount = 0,
                 difSum = 0,
                 rating1, rating1Count = 0,
@@ -135,36 +135,47 @@
             // sort table
             sorttable.innerSortFunction.apply(table.getElementsByTagName('th')[0], []);
         });
-    }
+    };
+
+    var compError = function(msg) {
+        outputDiv.innerHTML = '<div class="tac"><strong>' + msg + '</strong></div>';
+    };
 
     // MAIN
     // setup references to input elements
     var txtUser1 = document.getElementById('txtUser1'),
         txtUser2 = document.getElementById('txtUser2'),
-        btnCompare = document.getElementById('btnCompare'),
+        formCompare = document.getElementById('formCompare'),
         ddlTitles = document.getElementById('ddlTitles'),
+        loadingIndicator = document.querySelector('.loading-indicator'),
         outputDiv = document.getElementById('outputDiv');
 
     var user1, user2;
 
-    btnCompare.addEventListener('click', function() {
+    formCompare.addEventListener('submit', function(e) {
+        e.preventDefault();
         user1 = txtUser1.value.trim();
         user2 = txtUser2.value.trim();
         if (user1 && user2) {
+            outputDiv.innerHTML = '';
             // Can't compare same user
             if (user1 === user2) {
-                outputDiv.innerHTML = "Can't compare the same user";
+                compError("Can\'t compare the same user.");
                 return;
             }
 
-            outputDiv.innerHTML = 'Processing...';
+            loadingIndicator.removeAttribute('hidden');
             // get both lists and send them to compare
             Promise.all([hb.getAnimeList(user1), hb.getAnimeList(user2)]).done(function(lists) {
-                compare(lists[0], lists[1]);
+                compare(lists[0], lists[1]).done(function() {
+                    loadingIndicator.setAttribute('hidden', '');
+                });
             }, function() {
-                outputDiv.innerHTML = 'Failed to get list data';
+                loadingIndicator.setAttribute('hidden', '');
+                compError('Failed to get list data, check the usernames and try again.');
             });
         }
+        return false;
     });
 
     ddlTitles.addEventListener('change', function() {

@@ -1,0 +1,23 @@
+.header {
+	text-align: center;
+}
+
+.content table {
+	margin: auto;
+}
+
+.content th {
+	cursor: pointer;
+}
+
+.content > div {
+	margin: auto;
+}
+
+.loading-indicator {
+
+}
+
+.tac {
+	text-align: center;
+}
