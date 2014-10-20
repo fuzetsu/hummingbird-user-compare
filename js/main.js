@@ -59,7 +59,7 @@
 
     var compare = function(list1, list2) {
         // get title language preference
-        var titles = document.getElementById('ddlTitles').value;
+        var titles = ddlTitles.value;
 
         var animeInCommon = [];
 
@@ -137,37 +137,17 @@
         });
     }
 
-    var getCookie = function(cname) {
-        var name = cname + '=';
-        var ca = document.cookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ') c = c.substring(1);
-            if (c.indexOf(name) != -1) return c.substring(name.length, c.length);
-        }
-        return '';
-    }
-
-    var setCookie = function(cname, cvalue, exdays) {
-        var d = new Date();
-        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-        var expires = 'expires=' + d.toUTCString();
-        document.cookie = cname + '=' + cvalue + '; ' + expires;
-    }
-
     // MAIN
     // setup references to input elements
     var txtUser1 = document.getElementById('txtUser1'),
         txtUser2 = document.getElementById('txtUser2'),
         btnCompare = document.getElementById('btnCompare'),
+        ddlTitles = document.getElementById('ddlTitles'),
         outputDiv = document.getElementById('outputDiv');
 
     var user1, user2;
 
     btnCompare.addEventListener('click', function() {
-        // set the titles cookie
-        setCookie('titles', document.getElementById('ddlTitles').value, 365);
-
         user1 = txtUser1.value.trim();
         user2 = txtUser2.value.trim();
         if (user1 && user2) {
@@ -185,6 +165,10 @@
                 outputDiv.innerHTML = 'Failed to get list data';
             });
         }
+    });
+
+    ddlTitles.addEventListener('change', function() {
+        localStorage.hbirdTitlePref = ddlTitles.value;
     });
 
     // parse query string
@@ -205,9 +189,7 @@
     txtUser2.value = user2 || '';
 
     // initialize title dropdown
-    var titleCookie = getCookie('titles');
-    if (titleCookie)
-        document.getElementById('ddlTitles').value = titleCookie;
+    ddlTitles.value = localStorage.hbirdTitlePref || 'canonical';
 
     //if there are values in both text boxes automatically run the compare
     if (txtUser1.value.trim() && txtUser2.value.trim())
