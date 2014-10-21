@@ -3,7 +3,7 @@
     var hb = {
 
         API_URL: 'https://hummingbirdv1.p.mashape.com',
-        API_KEY: 'nr5IdgBU8pmshScE5qxAH92MmFwWp1oqx4mjsnA5igw5vcKlXu',
+        API_KEY: 'lbeDVnfAkWmsh7aYsrc87ScESQe0p1qlpj4jsnIMayh3tGQNE0',
 
         // convert to 10 point scoring
         c10p: function(score) {
