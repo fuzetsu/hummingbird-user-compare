@@ -157,6 +157,7 @@
         user1 = txtUser1.value.trim();
         user2 = txtUser2.value.trim();
         if (user1 && user2) {
+            outputDiv.style.opacity = 0;
             outputDiv.innerHTML = '';
             // Can't compare same user
             if (user1 === user2) {
@@ -169,6 +170,7 @@
             Promise.all([hb.getAnimeList(user1), hb.getAnimeList(user2)]).done(function(lists) {
                 compare(lists[0], lists[1]).done(function() {
                     loadingIndicator.setAttribute('hidden', '');
+                    outputDiv.style.opacity = 1;
                 });
             }, function() {
                 loadingIndicator.setAttribute('hidden', '');

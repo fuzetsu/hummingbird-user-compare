@@ -25,3 +25,13 @@
 .tac {
     text-align: center;
 }
+
+#outputDiv {
+	transition: 0.5s;
+}
+
+@media only screen and (max-width: 592px) {
+	.header {
+		font-size: 1em;
+	}
+}
