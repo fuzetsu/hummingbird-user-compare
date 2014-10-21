@@ -127,7 +127,6 @@
                 dif = difSum / difCount;
 
             html += '</tbody><tfoot><tr></tr><tr><td>Mean Values (' + common.length + ' total)</td><td class="' + (rating1 > rating2 ? 'strong' : '') + '">' + rating1.toFixed(2) + '</td><td class="' + (rating2 > rating1 ? 'strong' : '') + '">' + rating2.toFixed(2) + '</td><td>' + dif.toFixed(2) + '</td></tr></tfoot></table>';
-            console.log(html);
             outputDiv.innerHTML = html;
 
             // make table sortable
