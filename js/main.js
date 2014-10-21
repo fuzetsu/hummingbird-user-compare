@@ -114,7 +114,7 @@
                     rating2Sum += rating2;
                 }
 
-                html += '<tr><td>' + anime1.title + '</td><td>' + rating1 + '</td><td>' + rating2 + '</td><td>' + dif + '</td></tr>';
+                html += '<tr><td>' + anime1.title + '</td><td class="' + (rating1 > rating2 ? 'strong' : '') + '">' + rating1 + '</td><td class="' + (rating2 > rating1 ? 'strong' : '') + '">' + rating2 + '</td><td>' + dif + '</td></tr>';
             }
             // calculate means
             rating1 = rating2 = '-';
@@ -126,7 +126,8 @@
             if (difCount > 0)
                 dif = difSum / difCount;
 
-            html += '<tr></tbody><tfoot><td>Mean Values (' + common.length + ' total)</td><td>' + rating1.toFixed(2) + '</td><td>' + rating2.toFixed(2) + '</td><td>' + dif.toFixed(2) + '</td></tr></tfoot></table>';
+            html += '</tbody><tfoot><tr></tr><tr><td>Mean Values (' + common.length + ' total)</td><td class="' + (rating1 > rating2 ? 'strong' : '') + '">' + rating1.toFixed(2) + '</td><td class="' + (rating2 > rating1 ? 'strong' : '') + '">' + rating2.toFixed(2) + '</td><td>' + dif.toFixed(2) + '</td></tr></tfoot></table>';
+            console.log(html);
             outputDiv.innerHTML = html;
 
             // make table sortable
