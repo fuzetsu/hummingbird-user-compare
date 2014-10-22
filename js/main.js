@@ -32,11 +32,12 @@
 
             return new Promise(function(resolve, reject) {
                 var xhr = new XMLHttpRequest();
-                xhr.open('get', 'http://fuzetsu.site90.net/hb.php?user_id=' + escape(username));
-                xhr.responseType = 'document';
+                //xhr.open('get', 'http://fuzetsu.site90.net/hb.php?user_id=' + escape(username));
+                xhr.open('get', 'http://leefallat.ca/other/hb.php?user_id=' + escape(username));
+                xhr.responseType = 'json';
                 xhr.addEventListener('error', reject);
                 xhr.addEventListener('load', function() {
-                    resolve(JSON.parse(xhr.response.querySelector('pre').textContent));
+                    resolve(xhr.response);
                 });
                 xhr.send();
             }).then(function(res) {
