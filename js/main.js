@@ -158,7 +158,7 @@
             if (difCount > 0)
                 dif = difSum / difCount;
 
-            html += '</tbody><tfoot><tr></tr><tr><td>Mean Values (' + common.length + ' total)</td><td class="' + (rating1 > rating2 ? 'strong' : '') + '">' + rating1.toFixed(2) + '</td><td class="' + (rating2 > rating1 ? 'strong' : '') + '">' + rating2.toFixed(2) + '</td><td>' + dif.toFixed(2) + '</td></tr></tfoot></table>';
+            html += '</tbody><tfoot><tr></tr><tr><td>Mean Values (' + common.length + ' total)</td><td class="' + (rating1 > rating2 ? 'strong' : '') + '">' + (rating1.toFixed ? rating1.toFixed(2) : rating1) + '</td><td class="' + (rating2 > rating1 ? 'strong' : '') + '">' + (rating2.toFixed ? rating2.toFixed(2) : rating2) + '</td><td>' + (dif.toFixed ? dif.toFixed(2) : dif) + '</td></tr></tfoot></table>';
             outputDiv.innerHTML = html;
 
             // make table sortable
