@@ -27,6 +27,31 @@
 
         },
 
+        getAnimeListByProxy: function(username) {
+            var self = this;
+
+            return new Promise(function(resolve, reject) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('get', 'http://fuzetsu.site90.net/hb.php?user_id=' + escape(username));
+                xhr.responseType = 'document';
+                xhr.addEventListener('error', reject);
+                xhr.addEventListener('load', function() {
+                    resolve(JSON.parse(xhr.response.querySelector('pre').textContent));
+                });
+                xhr.send();
+            }).then(function(res) {
+                return res.library_entries.map(function(entry, idx) {
+                    var anime = res.anime[idx];
+                    return Util.extend(entry, {
+                        canonical_title: anime.canonical_title,
+                        english_title: anime.english_title,
+                        romaji_title: anime.romaji_title,
+                        rating: self.c10p(entry.rating)
+                    });
+                });
+            });
+        },
+
         getAnimeList: function(username) {
 
             var self = this;
@@ -57,6 +82,18 @@
         }
     };
 
+    var Util = {
+        extend: function(orig, ext) {
+            var key;
+            for(key in ext) {
+                if(ext.hasOwnProperty(key)) {
+                    orig[key] = ext[key];
+                }
+            }
+            return orig;
+        }
+    };
+
     var compare = function(list1, list2) {
         // get title language preference
         var titles = ddlTitles.value;
@@ -67,16 +104,9 @@
             // we want to ignore the plan to watch list
             if (anime1.status === 'plan-to-watch') return;
             list2.some(function(anime2) { // lopo through the second list
-                if (anime1.slug === anime2.slug) { // we found a match
+                if (anime1.anime_id === anime2.anime_id) { // we found a match
                     if (anime2.status !== 'plan-to-watch') {
-                        if (titles === 'canonical') {
-                            animeInCommon.push([anime1, anime2]);
-                        } else {
-                            animeInCommon.push(hb.getAnime(anime1.slug, titles).then(function(aTitle) {
-                                anime1.title = anime2.title = aTitle.title;
-                                return [anime1, anime2];
-                            }));
-                        }
+                        animeInCommon.push([anime1, anime2]);
                     }
                     return true; // start looking for next match
                 }
@@ -114,7 +144,9 @@
                     rating2Sum += rating2;
                 }
 
-                html += '<tr><td>' + anime1.title + '</td><td class="' + (rating1 > rating2 ? 'strong' : '') + '">' + rating1 + '</td><td class="' + (rating2 > rating1 ? 'strong' : '') + '">' + rating2 + '</td><td>' + dif + '</td></tr>';
+                var title = anime1[titles + '_title'] || anime1.canonical_title;
+
+                html += '<tr><td>' + title + '</td><td class="' + (rating1 > rating2 ? 'strong' : '') + '">' + rating1 + '</td><td class="' + (rating2 > rating1 ? 'strong' : '') + '">' + rating2 + '</td><td>' + dif + '</td></tr>';
             }
             // calculate means
             rating1 = rating2 = '-';
@@ -162,18 +194,20 @@
             // Can't compare same user
             if (user1 === user2) {
                 compError("Can\'t compare the same user.");
+                outputDiv.style.opacity = 1;
                 return;
             }
 
             loadingIndicator.removeAttribute('hidden');
             // get both lists and send them to compare
-            Promise.all([hb.getAnimeList(user1), hb.getAnimeList(user2)]).done(function(lists) {
+            Promise.all([hb.getAnimeListByProxy(user1), hb.getAnimeListByProxy(user2)]).done(function(lists) {
                 compare(lists[0], lists[1]).done(function() {
                     loadingIndicator.setAttribute('hidden', '');
                     outputDiv.style.opacity = 1;
                 });
             }, function() {
                 loadingIndicator.setAttribute('hidden', '');
+                outputDiv.style.opacity = 1;
                 compError('Failed to get list data, check the usernames and try again.');
             });
         }
