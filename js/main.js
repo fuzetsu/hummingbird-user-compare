@@ -71,7 +71,7 @@
         },
 
         getAnime: function(slug, titleLanguage) {
-            
+
             var self = this;
 
             return self
@@ -82,10 +82,106 @@
                         title: anime.title
                     };
                 });
+        },
+
+        compareLists: function(compareData) {
+
+            var list1 = compareData.list1,
+                list2 = compareData.list2,
+                animeInCommon = [];
+
+            list1.forEach(function(anime1) { // loop through the first list
+                // we want to ignore the plan to watch list
+                if (anime1.status === 'plan-to-watch') return;
+                list2.some(function(anime2) { // loop through the second list
+                    if (anime1.anime_id === anime2.anime_id) { // we found a match
+                        if (anime2.status !== 'plan-to-watch') {
+                            animeInCommon.push([anime1, anime2]);
+                        }
+                        return true; // start looking for next match
+                    }
+                });
+            });
+
+            return Promise.all(animeInCommon).then(function(common) {
+
+                var difCount = 0,
+                    difSum = 0,
+                    rating1Count = 0,
+                    rating1Sum = 0,
+                    rating2Count = 0,
+                    rating2Sum = 0,
+                    rows = [];
+
+                common.forEach(function(pair) {
+
+                    var anime1 = pair[0],
+                        anime2 = pair[1];
+
+                    var rating1 = '-',
+                        rating2 = '-',
+                        diff = '';
+
+                    if (anime1.rating && anime2.rating) {
+                        diff = anime1.rating - anime2.rating;
+                        difCount++;
+                        difSum += diff;
+                    }
+                    if (anime1.rating) {
+                        rating1 = anime1.rating;
+                        rating1Count++;
+                        rating1Sum += rating1;
+                    }
+                    if (anime2.rating) {
+                        rating2 = anime2.rating;
+                        rating2Count++;
+                        rating2Sum += rating2;
+                    }
+
+                    rows.push({
+                        title: anime1[compareData.titlePref + '_title'] || anime1.canonical_title,
+                        rating1: rating1,
+                        rating2: rating2,
+                        diff: diff
+                    });
+
+                });
+
+                // calculate means
+                var rating1Mean = '-',
+                    rating2Mean = '-',
+                    diffMean = '';
+                if (rating1Count > 0)
+                    rating1Mean = (rating1Sum / rating1Count).toFixed(2);
+                if (rating2Count > 0)
+                    rating2Mean = (rating2Sum / rating2Count).toFixed(2);
+                if (difCount > 0)
+                    diffMean = (difSum / difCount).toFixed(2);
+
+                // set up data for template
+                return {
+                    user1: compareData.user1 + "'s",
+                    user2: compareData.user2 + "'s",
+                    rows: rows,
+                    rating1Mean: rating1Mean,
+                    rating2Mean: rating2Mean,
+                    diffMean: diffMean
+                };
+            });
         }
     };
 
     var Util = {
+        parseQuery: function() {
+            var query = {};
+            window.location.href.slice(window.location.href.lastIndexOf('?') + 1)
+                .split('&')
+                .forEach(function(pair) {
+                    var p = pair.split('=');
+                    query[p[0]] = p[1];
+                });
+            return query;
+        },
         extend: function(orig, ext) {
             var key;
             for (key in ext) {
@@ -94,181 +190,130 @@
                 }
             }
             return orig;
+        },
+        q: function(query, context) {
+            return (context || document).querySelector(query);
+        },
+        qq: function(query, context) {
+            return (context || document).querySelectorAll(query);
         }
     };
 
-    var compare = function(list1, list2) {
-        // get title language preference
-        var titles = ddlTitles.value;
+    var UI = {
 
-        var animeInCommon = [];
-
-        list1.forEach(function(anime1) { // loop through the first list
-            // we want to ignore the plan to watch list
-            if (anime1.status === 'plan-to-watch') return;
-            list2.some(function(anime2) { // loop through the second list
-                if (anime1.anime_id === anime2.anime_id) { // we found a match
-                    if (anime2.status !== 'plan-to-watch') {
-                        animeInCommon.push([anime1, anime2]);
-                    }
-                    return true; // start looking for next match
-                }
-            });
-        });
-
-        return Promise.all(animeInCommon).then(function(common) {
-
-            var difCount = 0,
-                difSum = 0,
-                rating1Count = 0,
-                rating1Sum = 0,
-                rating2Count = 0,
-                rating2Sum = 0,
-                rows = [];
-
-            common.forEach(function(pair) {
-
-                var anime1 = pair[0],
-                    anime2 = pair[1];
-
-                var rating1 = '-',
-                    rating2 = '-',
-                    diff = '';
-
-                if (anime1.rating && anime2.rating) {
-                    diff = anime1.rating - anime2.rating;
-                    difCount++;
-                    difSum += diff;
-                }
-                if (anime1.rating) {
-                    rating1 = anime1.rating;
-                    rating1Count++;
-                    rating1Sum += rating1;
-                }
-                if (anime2.rating) {
-                    rating2 = anime2.rating;
-                    rating2Count++;
-                    rating2Sum += rating2;
-                }
-
-                rows.push({
-                    title: anime1[titles + '_title'] || anime1.canonical_title,
-                    rating1: rating1,
-                    rating2: rating2,
-                    diff: diff
-                });
-
-            });
-
-            // calculate means
-            var rating1Mean = '-',
-                rating2Mean = '-',
-                diffMean = '';
-            if (rating1Count > 0)
-                rating1Mean = (rating1Sum / rating1Count).toFixed(2);
-            if (rating2Count > 0)
-                rating2Mean = (rating2Sum / rating2Count).toFixed(2);
-            if (difCount > 0)
-                diffMean = (difSum / difCount).toFixed(2);
-
-            // set up data for template
-            var data = {
-                user1: user1 + "'s",
-                user2: user2 + "'s",
-                rows: rows,
-                rating1Mean: rating1Mean,
-                rating2Mean: rating2Mean,
-                diffMean: diffMean
-            };
-
-            // generate and output html using data and template
-            outputDiv.innerHTML = comparisonTableTemplate(data);
-
-            // make table sortable
-            var table = document.getElementById('outputTable');
-            sorttable.makeSortable(table);
-            // sort table
-            sorttable.innerSortFunction.apply(table.getElementsByTagName('th')[0], []);
-        });
-    };
-
-    var compError = function(msg) {
-        outputDiv.innerHTML = '<div class="tac"><strong>' + msg + '</strong></div>';
-    };
-
-    // Handlebars Helpers
-    Handlebars.registerHelper('bold', function(first, second) {
-        return (first > second ? 'bold' : '');
-    });
-
-    // precompile templates
-    var comparisonTableTemplate = Handlebars.compile(document.getElementById('comparison-table').innerHTML);
-
-    // setup references to input elements
-    var txtUser1 = document.getElementById('txtUser1'),
-        txtUser2 = document.getElementById('txtUser2'),
-        formCompare = document.getElementById('formCompare'),
-        ddlTitles = document.getElementById('ddlTitles'),
-        loadingIndicator = document.querySelector('.loading-indicator'),
-        outputDiv = document.getElementById('outputDiv');
-
-    var user1, user2;
-
-    formCompare.addEventListener('submit', function(e) {
-        e.preventDefault();
-        user1 = txtUser1.value.trim();
-        user2 = txtUser2.value.trim();
-        if (user1 && user2) {
-            outputDiv.style.opacity = 0;
-            outputDiv.innerHTML = '';
-            // Can't compare same user
-            if (user1 === user2) {
-                compError("Can\'t compare the same user.");
-                outputDiv.style.opacity = 1;
-                return;
+        init: function() {
+            this.setupRefs();
+            this.initForm();
+            this.bindEvents();
+            this.compileTemplates();
+            this.registerHelpers();
+            //if there are values in both text boxes automatically run the compare
+            if (this.txtUser1.value.trim() && this.txtUser2.value.trim()) {
+                btnCompare.click();
             }
+        },
 
-            loadingIndicator.removeAttribute('hidden');
-            // get both lists and send them to compare
-            Promise.all([hb.getAnimeListByProxy(user1), hb.getAnimeListByProxy(user2)]).done(function(lists) {
-                compare(lists[0], lists[1]).done(function() {
-                    loadingIndicator.setAttribute('hidden', '');
-                    outputDiv.style.opacity = 1;
-                });
-            }, function() {
-                loadingIndicator.setAttribute('hidden', '');
-                outputDiv.style.opacity = 1;
-                compError('Failed to get list data, check the usernames and try again.');
+        setupRefs: function() {
+            this.txtUser1 = Util.q('#txtUser1');
+            this.txtUser2 = Util.q('#txtUser2');
+            this.formCompare = Util.q('#formCompare');
+            this.ddlTitles = Util.q('#ddlTitles');
+            this.loadingIndicator = Util.q('.loading-indicator');
+            this.outputDiv = Util.q('#outputDiv');
+        },
+
+        initForm: function() {
+            // parse query string
+            var query = Util.parseQuery();
+            txtUser1.value = query.user1 || '';
+            txtUser2.value = query.user2 || '';
+            this.ddlTitles.value = localStorage.hbirdTitlePref || 'canonical';
+        },
+
+        bindEvents: function() {
+
+            var self = this;
+
+            self.formCompare.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var user1 = self.txtUser1.value.trim(),
+                    user2 = self.txtUser2.value.trim();
+                if (user1 && user2) {
+                    self.outputDiv.innerHTML = '';
+                    // Can't compare same user
+                    if (user1 === user2) {
+                        self.error("Can\'t compare the same user.");
+                        return;
+                    }
+                    self.toggleLoading('show');
+                    // try displaying the comparison
+                    self.displayComparison(user1, user2).done(
+                        self.toggleLoading.bind(self, 'hide'), // success
+                        function() { // error
+                            self.toggleLoading('hide');
+                            self.error('Failed to get list data, check the usernames ane try again.');
+                        }
+                    );
+                } else {
+                    self.error('Enter two different usernames to compare.');
+                }
+                return false;
             });
-        }
-        return false;
-    });
 
-    ddlTitles.addEventListener('change', function() {
-        localStorage.hbirdTitlePref = ddlTitles.value;
-    });
+            self.ddlTitles.addEventListener('change', function() {
+                localStorage.hbirdTitlePref = this.value;
+            });
+        },
 
-    // parse query string
-    var query = {};
-    window.location.href.slice(window.location.href.lastIndexOf('?') + 1)
-        .split('&')
-        .forEach(function(pair) {
-            var p = pair.split('=');
-            query[p[0]] = p[1];
-        });
+        toggleLoading: function(state) {
+            if (state === 'show') {
+                this.loadingIndicator.removeAttribute('hidden');
+                this.outputDiv.style.opacity = 0;
+            } else if (state === 'hide') {
+                this.loadingIndicator.setAttribute('hidden', '');
+                this.outputDiv.style.opacity = 1;
+            }
+        },
 
-    // if possible get usernames from query string
-    user1 = query['user1'];
-    user2 = query['user2'];
+        compileTemplates: function() {
+            this.comparisonTableTemplate = Handlebars.compile(Util.q('#comparison-table').innerHTML);
+        },
 
-    // initialize textboxes if possible
-    txtUser1.value = user1 || '';
-    txtUser2.value = user2 || '';
+        registerHelpers: function() {
+            Handlebars.registerHelper('bold', function(first, second) {
+                return (first > second ? 'bold' : '');
+            });
+        },
 
-    // initialize title dropdown
-    ddlTitles.value = localStorage.hbirdTitlePref || 'canonical';
+        displayComparison: function(user1, user2) {
 
-    //if there are values in both text boxes automatically run the compare
-    if (txtUser1.value.trim() && txtUser2.value.trim())
-        btnCompare.click();
+            return Promise
+                .all([hb.getAnimeListByProxy(user1), hb.getAnimeListByProxy(user2)])
+                .then(function(lists) {
+                    return hb.compareLists({
+                        user1: user1,
+                        user2: user2,
+                        list1: lists[0],
+                        list2: lists[1],
+                        titlePref: UI.ddlTitles.value
+                    });
+                }).then(function(data) {
+                    // generate and output html using data and template
+                    UI.outputDiv.innerHTML = UI.comparisonTableTemplate(data);
+                    // make table sortable
+                    var table = Util.q('#outputTable');
+                    sorttable.makeSortable(table);
+                    // sort table
+                    sorttable.innerSortFunction.apply(table.querySelector('th'), []);
+                });
+        },
+
+        error: function(msg) {
+            outputDiv.innerHTML = '<div class="tac"><strong>' + msg + '</strong></div>';
+        },
+
+    };
+
+    UI.init();
+
 }());
