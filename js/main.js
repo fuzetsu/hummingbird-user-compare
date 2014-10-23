@@ -86,8 +86,8 @@
     var Util = {
         extend: function(orig, ext) {
             var key;
-            for(key in ext) {
-                if(ext.hasOwnProperty(key)) {
+            for (key in ext) {
+                if (ext.hasOwnProperty(key)) {
                     orig[key] = ext[key];
                 }
             }
@@ -114,25 +114,30 @@
             });
         });
 
-        return Promise.all(animeInCommon).then(function(common) {
-            //generate html
-            var html = '<table class="pure-table pure-table-striped sortable" id="outputTable"><thead><tr><th>Title</th><th>' + user1 + '\'s Rating</th><th>' + user2 + '\'s Rating</th><th class="sorttable_nosort">Difference</th></tr></thead><tbody>';
-            var dif, difCount = 0,
-                difSum = 0,
-                rating1, rating1Count = 0,
-                rating1Sum = 0,
-                rating2, rating2Sum = 0,
-                rating2Count = 0;
-            for (var i = 0; i < common.length; i++) {
-                anime1 = common[i][0];
-                anime2 = common[i][1];
 
-                rating1 = rating2 = '-';
-                dif = '';
+        return Promise.all(animeInCommon).then(function(common) {
+
+            var difCount = 0,
+                difSum = 0,
+                rating1Count = 0,
+                rating1Sum = 0,
+                rating2Count = 0,
+                rating2Sum = 0,
+                rows = [];
+
+            common.forEach(function(pair) {
+
+                var anime1 = pair[0],
+                    anime2 = pair[1];
+
+                var rating1 = '-',
+                    rating2 = '-',
+                    diff = '';
+
                 if (anime1.rating && anime2.rating) {
-                    dif = anime1.rating - anime2.rating;
+                    diff = anime1.rating - anime2.rating;
                     difCount++;
-                    difSum += dif;
+                    difSum += diff;
                 }
                 if (anime1.rating) {
                     rating1 = anime1.rating;
@@ -145,22 +150,38 @@
                     rating2Sum += rating2;
                 }
 
-                var title = anime1[titles + '_title'] || anime1.canonical_title;
+                rows.push({
+                    title: anime1[titles + '_title'] || anime1.canonical_title,
+                    rating1: rating1,
+                    rating2: rating2,
+                    diff: diff
+                });
 
-                html += '<tr><td>' + title + '</td><td class="' + (rating1 > rating2 ? 'strong' : '') + '">' + rating1 + '</td><td class="' + (rating2 > rating1 ? 'strong' : '') + '">' + rating2 + '</td><td>' + dif + '</td></tr>';
-            }
+            });
+
             // calculate means
-            rating1 = rating2 = '-';
-            dif = '';
+            var rating1Mean = '-',
+                rating2Mean = '-',
+                diffMean = '';
             if (rating1Count > 0)
-                rating1 = rating1Sum / rating1Count;
+                rating1Mean = (rating1Sum / rating1Count).toFixed(2);
             if (rating2Count > 0)
-                rating2 = rating2Sum / rating2Count;
+                rating2Mean = (rating2Sum / rating2Count).toFixed(2);
             if (difCount > 0)
-                dif = difSum / difCount;
+                diffMean = (difSum / difCount).toFixed(2);
 
-            html += '</tbody><tfoot><tr></tr><tr><td>Mean Values (' + common.length + ' total)</td><td class="' + (rating1 > rating2 ? 'strong' : '') + '">' + (rating1.toFixed ? rating1.toFixed(2) : rating1) + '</td><td class="' + (rating2 > rating1 ? 'strong' : '') + '">' + (rating2.toFixed ? rating2.toFixed(2) : rating2) + '</td><td>' + (dif.toFixed ? dif.toFixed(2) : dif) + '</td></tr></tfoot></table>';
-            outputDiv.innerHTML = html;
+            // set up data for template
+            var data = {
+                user1: user1 + "'s",
+                user2: user2 + "'s",
+                rows: rows,
+                rating1Mean: rating1Mean,
+                rating2Mean: rating2Mean,
+                diffMean: diffMean
+            };
+
+            // generate and output html using data and template
+            outputDiv.innerHTML = comparisonTableTemplate(data);
 
             // make table sortable
             var table = document.getElementById('outputTable');
@@ -174,7 +195,14 @@
         outputDiv.innerHTML = '<div class="tac"><strong>' + msg + '</strong></div>';
     };
 
-    // MAIN
+    // Handlebars Helpers
+    Handlebars.registerHelper('bold', function(first, second) {
+        return (first > second ? 'bold' : '');
+    });
+
+    // precompile templates
+    var comparisonTableTemplate = Handlebars.compile(document.getElementById('comparison-table').innerHTML);
+
     // setup references to input elements
     var txtUser1 = document.getElementById('txtUser1'),
         txtUser2 = document.getElementById('txtUser2'),
