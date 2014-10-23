@@ -13,6 +13,7 @@
         sendAPIRequest: function(method, url, data) {
 
             var self = this;
+
             return new Promise(function(resolve, reject) {
                 var xhr = new XMLHttpRequest();
                 xhr.open(method, self.API_URL + url, true);
@@ -24,10 +25,10 @@
                 xhr.setRequestHeader('X-Mashape-Key', self.API_KEY);
                 xhr.send(data);
             });
-
         },
 
         getAnimeListByProxy: function(username) {
+
             var self = this;
 
             return new Promise(function(resolve, reject) {
@@ -70,6 +71,7 @@
         },
 
         getAnime: function(slug, titleLanguage) {
+            
             var self = this;
 
             return self
@@ -104,7 +106,7 @@
         list1.forEach(function(anime1) { // loop through the first list
             // we want to ignore the plan to watch list
             if (anime1.status === 'plan-to-watch') return;
-            list2.some(function(anime2) { // lopo through the second list
+            list2.some(function(anime2) { // loop through the second list
                 if (anime1.anime_id === anime2.anime_id) { // we found a match
                     if (anime2.status !== 'plan-to-watch') {
                         animeInCommon.push([anime1, anime2]);
@@ -113,7 +115,6 @@
                 }
             });
         });
-
 
         return Promise.all(animeInCommon).then(function(common) {
 
