@@ -209,7 +209,7 @@
             this.registerHelpers();
             //if there are values in both text boxes automatically run the compare
             if (this.txtUser1.value.trim() && this.txtUser2.value.trim()) {
-                btnCompare.click();
+                this.btnCompare.click();
             }
         },
 
@@ -220,13 +220,14 @@
             this.ddlTitles = Util.q('#ddlTitles');
             this.loadingIndicator = Util.q('.loading-indicator');
             this.outputDiv = Util.q('#outputDiv');
+            this.btnCompare = Util.q('#btnCompare');
         },
 
         initForm: function() {
             // parse query string
             var query = Util.parseQuery();
-            txtUser1.value = query.user1 || '';
-            txtUser2.value = query.user2 || '';
+            this.txtUser1.value = query.user1 || '';
+            this.txtUser2.value = query.user2 || '';
             this.ddlTitles.value = localStorage.hbirdTitlePref || 'canonical';
         },
 
@@ -309,7 +310,7 @@
         },
 
         error: function(msg) {
-            outputDiv.innerHTML = '<div class="tac"><strong>' + msg + '</strong></div>';
+            this.outputDiv.innerHTML = '<div class="tac"><strong>' + msg + '</strong></div>';
         },
 
     };
