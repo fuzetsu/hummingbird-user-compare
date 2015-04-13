@@ -162,8 +162,6 @@
         var anime1 = pair[0],
           anime2 = pair[1];
 
-          console.log(anime1);
-
         return {
           title: anime1[titlePref + '_title'] || anime1.canonical_title,
           epswatched1: anime1.episodes_watched + '/' + (anime1.episode_count || '?'),
