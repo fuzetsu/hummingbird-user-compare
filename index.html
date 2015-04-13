@@ -39,7 +39,8 @@
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
     </a>
     <script type="text/template" id="comparison-table">
-        <table class="pure-table pure-table-striped sortable" id="outputTable">
+        <h3 class="tac">Anime Both Users Have Completed</h3>
+        <table class="pure-table pure-table-striped sortable" id="tblCompleted">
             <thead>
                 <tr>
                     <th>Title</th>
@@ -48,6 +49,7 @@
                     <th class="sorttable_nosort">Difference</th>
                 </tr>
             </thead>
+            {{#with bothCompleted}}
             <tbody>
                 {{#each rows}}
                 <tr>
@@ -55,8 +57,8 @@
                     <td class="{{bold rating1 rating2}}">{{rating1}}</td>
                     <td class="{{bold rating2 rating1}}">{{rating2}}</td>
                     <td>{{diff}}</td>
-                    {{/each}}
                 </tr>
+                {{/each}}
             </tbody>
             <tfoot>
                 <tr>
@@ -66,7 +68,79 @@
                     <td>{{diffMean}}</td>
                 </tr>
             </tfoot>
+            {{/with}}
         </table>
+        {{#if bothIncomplete}}
+        <h3 class="tac">Anime Neither User Has Completed</h3>
+        <table class="pure-table pure-table-striped sortable" id="tblBothIncomplete">
+            <thead>
+                <th>Title</th>
+                <th>{{user1}} status</th>
+                <th>Episodes Watched</th>
+                <th>{{user2}} status</th>
+                <th>Episodes Watched</th>
+                <th>Difference</th>
+            </thead>
+            <tbody>
+                {{#each bothIncomplete}}
+                <tr>
+                    <td>{{title}}</td>
+                    <td>{{status1}}</td>
+                    <td>{{epswatched1}}</td>
+                    <td>{{status2}}</td>
+                    <td>{{epswatched2}}</td>
+                    <td>{{epdiff}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        {{/if}}
+        {{#if user1Incomplete}}
+        <h3 class="tac">{{user1}} Incomplete Anime</h3>
+        <table class="pure-table pure-table-striped sortable" id="tblUser1Incomplete">
+            <thead>
+                <th>Title</th>
+                <th>{{user1}} status</th>
+                <th>Episodes Watched</th>
+                <th>{{user2}} status</th>
+                <th>{{user2}} rating</th>
+            </thead>
+            <tbody>
+                {{#each user1Incomplete}}
+                <tr>
+                    <td>{{title}}</td>
+                    <td>{{status1}}</td>
+                    <td>{{epswatched1}}</td>
+                    <td>{{status2}}</td>
+                    <td>{{rating2}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        {{/if}}
+        {{#if user2Incomplete}}
+        <h3 class="tac">{{user2}} Incomplete Anime</h3>
+        <table class="pure-table pure-table-striped sortable" id="tblUser2Incomplete">
+            <thead>
+                <th>Title</th>
+                <th>{{user2}} status</th>
+                <th>Episodes Watched</th>
+                <th>{{user1}} status</th>
+                <th>{{user1}} rating</th>
+            </thead>
+            <tbody>
+                {{#each user2Incomplete}}
+                <tr>
+                    <td>{{title}}</td>
+                    <td>{{status1}}</td>
+                    <td>{{epswatched1}}</td>
+                    <td>{{status2}}</td>
+                    <td>{{rating2}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        {{/if}}
     </script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/bluebird/1.2.2/bluebird.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
