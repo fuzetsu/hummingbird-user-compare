@@ -4,6 +4,7 @@
 
     API_URL: 'https://hummingbirdv1.p.mashape.com',
     API_KEY: 'lbeDVnfAkWmsh7aYsrc87ScESQe0p1qlpj4jsnIMayh3tGQNE0',
+    ANIME_URL: 'https://hummingbird.me/anime/',
 
     // convert to 10 point scoring
     c10p: function(score) {
@@ -114,6 +115,7 @@
 
         return ({
           title: anime1[titlePref + '_title'] || anime1.canonical_title,
+          url: hb.ANIME_URL + anime1.anime_id,
           rating1: rating1,
           rating2: rating2,
           diff: diff
@@ -149,6 +151,7 @@
 
         return {
           title: anime1[titlePref + '_title'] || anime1.canonical_title,
+          url: hb.ANIME_URL + anime1.anime_id,
           epswatched1: anime1.episodes_watched + '/' + (anime1.episode_count || '?'),
           status1: anime1.status,
           status2: anime2.status,
@@ -164,6 +167,7 @@
 
         return {
           title: anime1[titlePref + '_title'] || anime1.canonical_title,
+          url: hb.ANIME_URL + anime1.anime_id,
           epswatched1: anime1.episodes_watched + '/' + (anime1.episode_count || '?'),
           epswatched2: anime2.episodes_watched + '/' + (anime2.episode_count || '?'),
           epdiff: anime1.episodes_watched - anime2.episodes_watched,

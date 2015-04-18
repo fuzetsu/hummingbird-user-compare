@@ -1,34 +1,51 @@
 body {
-    font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 }
+
 .header {
-    text-align: center;
+  text-align: center;
 }
+
 .content table {
-    margin: auto;
+  margin: auto;
 }
+
 .content th {
-    cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -o-user-select: none;
-    user-select: none;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
+
 .content > div {
-    margin: auto;
+  margin: auto;
 }
+
 .tac {
-    text-align: center;
+  text-align: center;
 }
+
 .bold {
-    font-weight: bold;
+  font-weight: bold;
 }
+
 #outputDiv {
-    transition: 0.5s;
+  transition: 0.5s;
 }
+
 @media only screen and (max-width: 592px) {
-    .header {
-        font-size: 1em;
-    }
+  .header {
+    font-size: 1em;
+  }
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover {
+  text-decoration: underline;
 }

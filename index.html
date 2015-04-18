@@ -53,7 +53,7 @@
             <tbody>
                 {{#each rows}}
                 <tr>
-                    <td>{{title}}</td>
+                    <td><a href="{{url}}" target="_blank">{{title}}</a></td>
                     <td class="{{bold rating1 rating2}}">{{rating1}}</td>
                     <td class="{{bold rating2 rating1}}">{{rating2}}</td>
                     <td>{{diff}}</td>
@@ -84,7 +84,7 @@
             <tbody>
                 {{#each bothIncomplete}}
                 <tr>
-                    <td>{{title}}</td>
+                    <td><a href="{{url}}" target="_blank">{{title}}</a></td>
                     <td>{{status1}}</td>
                     <td>{{epswatched1}}</td>
                     <td>{{status2}}</td>
@@ -108,7 +108,7 @@
             <tbody>
                 {{#each user1Incomplete}}
                 <tr>
-                    <td>{{title}}</td>
+                    <td><a href="{{url}}" target="_blank">{{title}}</a></td>
                     <td>{{status1}}</td>
                     <td>{{epswatched1}}</td>
                     <td>{{status2}}</td>
@@ -131,7 +131,7 @@
             <tbody>
                 {{#each user2Incomplete}}
                 <tr>
-                    <td>{{title}}</td>
+                    <td><a href="{{url}}" target="_blank">{{title}}</a></td>
                     <td>{{status1}}</td>
                     <td>{{epswatched1}}</td>
                     <td>{{status2}}</td>
