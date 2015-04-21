@@ -86,9 +86,9 @@
                 <tr>
                     <td><a href="{{url}}" target="_blank">{{title}}</a></td>
                     <td>{{status1}}</td>
-                    <td>{{epswatched1}}</td>
+                    <td sorttable_customkey="{{epsWatchedSort1}}">{{epswatched1}}</td>
                     <td>{{status2}}</td>
-                    <td>{{epswatched2}}</td>
+                    <td sorttable_customkey="{{epsWatchedSort2}}">{{epswatched2}}</td>
                     <td>{{epdiff}}</td>
                 </tr>
                 {{/each}}
@@ -110,7 +110,7 @@
                 <tr>
                     <td><a href="{{url}}" target="_blank">{{title}}</a></td>
                     <td>{{status1}}</td>
-                    <td>{{epswatched1}}</td>
+                    <td sorttable_customkey="{{epsWatchedSort1}}">{{epswatched1}}</td>
                     <td>{{status2}}</td>
                     <td>{{rating2}}</td>
                 </tr>
@@ -133,7 +133,7 @@
                 <tr>
                     <td><a href="{{url}}" target="_blank">{{title}}</a></td>
                     <td>{{status1}}</td>
-                    <td>{{epswatched1}}</td>
+                    <td sorttable_customkey="{{epsWatchedSort1}}">{{epswatched1}}</td>
                     <td>{{status2}}</td>
                     <td>{{rating2}}</td>
                 </tr>
@@ -147,7 +147,7 @@
     <script src="js/sorttable.js"></script>
     <script src="js/main.js"></script>
     <!-- tracker beacon -->
-    <img src="https://ga-beacon.appspot.com/UA-61974780-1/hummingbird-user-compare/index.html?pixel" />
+    <img style="display:none;" src="https://ga-beacon.appspot.com/UA-61974780-1/hummingbird-user-compare/index.html?pixel" />
 </body>
 
 </html>

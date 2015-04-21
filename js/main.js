@@ -153,6 +153,7 @@
           title: anime1[titlePref + '_title'] || anime1.canonical_title,
           url: hb.ANIME_URL + anime1.anime_id,
           epswatched1: anime1.episodes_watched + '/' + (anime1.episode_count || '?'),
+          epsWatchedSort1: anime1.episodes_watched,
           status1: anime1.status,
           status2: anime2.status,
           rating2: anime2.rating || '-',
@@ -170,6 +171,8 @@
           url: hb.ANIME_URL + anime1.anime_id,
           epswatched1: anime1.episodes_watched + '/' + (anime1.episode_count || '?'),
           epswatched2: anime2.episodes_watched + '/' + (anime2.episode_count || '?'),
+          epsWatchedSort1: anime1.episodes_watched,
+          epsWatchedSort2: anime2.episodes_watched,
           epdiff: anime1.episodes_watched - anime2.episodes_watched,
           status1: anime1.status,
           status2: anime2.status
