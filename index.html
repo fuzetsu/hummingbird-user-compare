@@ -22,13 +22,17 @@
         <form class="pure-form tac" id="formCompare">
             <input id="txtUser1" type="text" size="10" placeholder="User 1">
             <input id="txtUser2" type="text" size="10" placeholder="User 2">
+            <select id="ddlListType" title="List Type">
+                <option value="" disabled>List Type</option>
+                <option value="anime" selected>Anime</option>
+                <option value="manga">Manga</option>
+            </select>
             <select id="ddlTitles" title="Title Format">
                 <option value="" disabled>Title Format</option>
                 <option value="canonical" selected>Canonical</option>
                 <option value="english">English</option>
                 <option value="romaji">Romanized</option>
             </select>
-
             <button class="pure-button pure-button-primary" id="btnCompare" type="submit">Compare</button>
         </form>
         <br>
@@ -46,7 +50,7 @@
         <div class="tac compatability" style="color: {{compat.style.color}}">
             {{compat.percent}}
         </div>
-        <h3 class="tac">Anime Both Users Have Completed</h3>
+        <h3 class="tac">{{type}} Both Users Have Completed</h3>
         <table class="pure-table pure-table-striped sortable" id="tblCompleted">
             <thead>
                 <tr>
@@ -78,14 +82,22 @@
             {{/with}}
         </table>
         {{#if bothIncomplete}}
-        <h3 class="tac">Anime Neither User Has Completed</h3>
+        <h3 class="tac">{{type}} Neither User Has Completed</h3>
         <table class="pure-table pure-table-striped sortable" id="tblBothIncomplete">
             <thead>
                 <th>Title</th>
                 <th>{{user1}} status</th>
-                <th>Episodes Watched</th>
+                {{#if isManga}}
+                    <th>Chapters Read</th>
+                {{else}}
+                    <th>Episodes Watched</th>
+                {{/if}}
                 <th>{{user2}} status</th>
-                <th>Episodes Watched</th>
+                {{#if isManga}}
+                    <th>Chapters Read</th>
+                {{else}}
+                    <th>Episodes Watched</th>
+                {{/if}}
                 <th>Difference</th>
             </thead>
             <tbody>
@@ -103,12 +115,16 @@
         </table>
         {{/if}}
         {{#if user1Incomplete}}
-        <h3 class="tac">{{user1}} Incomplete Anime</h3>
+        <h3 class="tac">{{user1}} Incomplete {{type}}</h3>
         <table class="pure-table pure-table-striped sortable" id="tblUser1Incomplete">
             <thead>
                 <th>Title</th>
                 <th>{{user1}} status</th>
-                <th>Episodes Watched</th>
+                {{#if isManga}}
+                    <th>Chapters Read</th>
+                {{else}}
+                    <th>Episodes Watched</th>
+                {{/if}}
                 <th>{{user2}} status</th>
                 <th>{{user2}} rating</th>
             </thead>
@@ -126,12 +142,16 @@
         </table>
         {{/if}}
         {{#if user2Incomplete}}
-        <h3 class="tac">{{user2}} Incomplete Anime</h3>
+        <h3 class="tac">{{user2}} Incomplete {{type}}</h3>
         <table class="pure-table pure-table-striped sortable" id="tblUser2Incomplete">
             <thead>
                 <th>Title</th>
                 <th>{{user2}} status</th>
-                <th>Episodes Watched</th>
+                {{#if isManga}}
+                    <th>Chapters Read</th>
+                {{else}}
+                    <th>Episodes Watched</th>
+                {{/if}}
                 <th>{{user1}} status</th>
                 <th>{{user1}} rating</th>
             </thead>

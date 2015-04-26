@@ -28,13 +28,13 @@
       });
     },
 
-    getAnimeListByProxy: function(username) {
+    getListByProxy: function(username, type) {
 
       var self = this;
 
       return new Promise(function(resolve, reject) {
         var xhr = new XMLHttpRequest();
-        xhr.open('get', 'http://fuzetsu.site90.net/hb.php?user_id=' + escape(username) + '&status=all');
+        xhr.open('get', 'http://fuzetsu.site90.net/hb.php?user_id=' + encodeURIComponent(username) + '&type=' + encodeURIComponent(type) + '&status=all');
         xhr.responseType = 'document';
         xhr.addEventListener('error', reject);
         xhr.addEventListener('load', function() {
@@ -46,10 +46,11 @@
         });
         xhr.send();
       }).then(function(res) {
-        return res.library_entries.map(function(entry, idx) {
-          var anime = res.anime[idx];
+        var entries = res.library_entries || res.manga_library_entries;
+        return entries.map(function(entry, idx) {
+          var content = res[type][idx];
           entry.rating = self.c10p(entry.rating);
-          return Util.extend(entry, anime);
+          return Util.extend(entry, content);
         });
       });
     },
@@ -82,6 +83,10 @@
             title: anime.title
           };
         });
+    },
+
+    getTitle: function(content, preference) {
+      return content[preference + '_title'] || content.canonical_title || content.english_title || content.romaji_title;
     },
 
     processCompletedList: function(list, titlePref) {
@@ -118,7 +123,7 @@
         }
 
         return ({
-          title: anime1[titlePref + '_title'] || anime1.canonical_title,
+          title: hb.getTitle(anime1, titlePref),
           url: hb.ANIME_URL + anime1.anime_id,
           rating1: rating1,
           rating2: rating2,
@@ -154,10 +159,10 @@
           anime2 = pair[1];
 
         return {
-          title: anime1[titlePref + '_title'] || anime1.canonical_title,
+          title: hb.getTitle(anime1, titlePref),
           url: hb.ANIME_URL + anime1.anime_id,
-          epswatched1: anime1.episodes_watched + '/' + (anime1.episode_count || '?'),
-          epsWatchedSort1: anime1.episodes_watched,
+          epswatched1: (anime1.episodes_watched || anime1.chapters_read) + '/' + (anime1.episode_count || anime1.chapter_count || '?'),
+          epsWatchedSort1: anime1.episodes_watched || anime1.chapters_read,
           status1: anime1.status,
           status2: anime2.status,
           rating2: anime2.rating || '-',
@@ -171,13 +176,13 @@
           anime2 = pair[1];
 
         return {
-          title: anime1[titlePref + '_title'] || anime1.canonical_title,
+          title: hb.getTitle(anime1, titlePref),
           url: hb.ANIME_URL + anime1.anime_id,
-          epswatched1: anime1.episodes_watched + '/' + (anime1.episode_count || '?'),
-          epswatched2: anime2.episodes_watched + '/' + (anime2.episode_count || '?'),
-          epsWatchedSort1: anime1.episodes_watched,
-          epsWatchedSort2: anime2.episodes_watched,
-          epdiff: anime1.episodes_watched - anime2.episodes_watched,
+          epswatched1: (anime1.episodes_watched || anime1.chapters_read) + '/' + (anime1.episode_count || anime1.chapter_count || '?'),
+          epswatched2: (anime2.episodes_watched || anime1.chapters_read) + '/' + (anime2.episode_count || anime1.chapter_count || '?'),
+          epsWatchedSort1: anime1.episodes_watched || anime1.chapters_read,
+          epsWatchedSort2: anime2.episodes_watched || anime1.chapters_read,
+          epdiff: (anime1.episodes_watched || anime1.chapters_read) - (anime2.episodes_watched || anime1.chapters_read),
           status1: anime1.status,
           status2: anime2.status
         };
@@ -268,6 +273,8 @@
 
       var self = this;
 
+      var type = compareData.listTypePref;
+
       var list1 = compareData.list1,
         list2 = compareData.list2,
         bothCompleted = [],
@@ -277,22 +284,22 @@
         bothRated = [],
         compat = {};
 
-      list1.forEach(function(anime1) { // loop through the first list
-        list2.some(function(anime2) { // loop through the second list
-          if (anime1.anime_id === anime2.anime_id) { // we found a match
-            if (anime1.status !== 'Completed') {
-              if (anime2.status !== 'Completed') {
-                bothIncomplete.push([anime1, anime2]);
+      list1.forEach(function(item1) { // loop through the first list
+        list2.some(function(item2) { // loop through the second list
+          if (item1.id === item2.id) { // we found a match
+            if (item1.status !== 'Completed') {
+              if (item2.status !== 'Completed') {
+                bothIncomplete.push([item1, item2]);
               } else {
-                user1Incomplete.push([anime1, anime2]);
+                user1Incomplete.push([item1, item2]);
               }
-            } else if (anime2.status !== 'Completed') {
-              user2Incomplete.push([anime2, anime1]);
+            } else if (item2.status !== 'Completed') {
+              user2Incomplete.push([item2, item1]);
             } else {
-              bothCompleted.push([anime1, anime2]);
+              bothCompleted.push([item1, item2]);
             }
-            if (anime1.rating && anime2.rating) {
-              bothRated.push([anime1, anime2]);
+            if (item1.rating && item2.rating) {
+              bothRated.push([item1, item2]);
             }
             return true; // start looking for next match
           }
@@ -307,6 +314,9 @@
       compat.percent = (compat.percent ? compat.percent.toFixed(2) + '%' : 'Not enough in common.');
 
       return Promise.props({
+
+        type: type.charAt(0).toUpperCase() + type.slice(1),
+        isManga: type === 'manga',
 
         user1: compareData.user1 + "'s",
         user2: compareData.user2 + "'s",
@@ -370,6 +380,7 @@
       this.loadingIndicator = Util.q('.loading-indicator');
       this.outputDiv = Util.q('#outputDiv');
       this.btnCompare = Util.q('#btnCompare');
+      this.ddlListType = Util.q('#ddlListType');
     },
 
     initForm: function() {
@@ -378,6 +389,7 @@
       this.txtUser1.value = query.user1 || '';
       this.txtUser2.value = query.user2 || '';
       this.ddlTitles.value = localStorage.hbirdTitlePref || 'canonical';
+      this.ddlListType.value = localStorage.hbirdListTypePref || 'anime';
     },
 
     bindEvents: function() {
@@ -414,6 +426,11 @@
       self.ddlTitles.addEventListener('change', function() {
         localStorage.hbirdTitlePref = this.value;
       });
+
+      self.ddlListType.addEventListener('change', function() {
+        localStorage.hbirdListTypePref = this.value;
+      });
+
     },
 
     toggleLoading: function(state) {
@@ -438,15 +455,18 @@
 
     displayComparison: function(user1, user2) {
 
+      var type = UI.ddlListType.value;
+
       return Promise
-        .all([hb.getAnimeListByProxy(user1), hb.getAnimeListByProxy(user2)])
+        .all([hb.getListByProxy(user1, type), hb.getListByProxy(user2, type)])
         .then(function(lists) {
           return hb.compareLists({
             user1: user1,
             user2: user2,
             list1: lists[0],
             list2: lists[1],
-            titlePref: UI.ddlTitles.value
+            titlePref: UI.ddlTitles.value,
+            listTypePref: type
           });
         }).then(function(data) {
           // generate and output html using data and template
