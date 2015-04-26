@@ -38,7 +38,11 @@
         xhr.responseType = 'document';
         xhr.addEventListener('error', reject);
         xhr.addEventListener('load', function() {
-          resolve(JSON.parse(xhr.response.querySelector('pre').textContent));
+          if(xhr.response.title.indexOf('404') !== -1) {
+            reject('user "' + username + '" does not exist');
+          } else {
+            resolve(JSON.parse(xhr.response.querySelector('pre').textContent));
+          }
         });
         xhr.send();
       }).then(function(res) {
