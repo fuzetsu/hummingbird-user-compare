@@ -181,37 +181,76 @@
     },
 
     calculateCompatability: function(list) {
-        if (list.length < 5) {
-            return "Unknown";
-        }
-        var scoreList1 = list.map(function(elem) {
-                return elem[0].rating;
-            }),
-            scoreList2 = list.map(function(elem) {
-                return elem[1].rating;
-            }),
-            mean1 = 0,
-            mean2 = 0,
-            product = 0,
-            sqmag1 = 0,
-            sqmag2 = 0,
-            i;
+      if (list.length < 5) {
+        return null;
+      }
+      var scoreList1 = list.map(function(elem) {
+          return elem[0].rating;
+        }),
+        scoreList2 = list.map(function(elem) {
+          return elem[1].rating;
+        }),
+        mean1 = 0,
+        mean2 = 0,
+        product = 0,
+        sqmag1 = 0,
+        sqmag2 = 0,
+        i;
 
-        for (i = 0; i < scoreList1.length; i++) {
-            mean1 += scoreList1[i];
-            mean2 += scoreList2[i];
-        }
-        mean1 /= scoreList1.length;
-        mean2 /= scoreList2.length;
+      for (i = 0; i < scoreList1.length; i++) {
+        mean1 += scoreList1[i];
+        mean2 += scoreList2[i];
+      }
+      mean1 /= scoreList1.length;
+      mean2 /= scoreList2.length;
 
-        for (i = 0; i < scoreList1.length; i++) {
-            product += (scoreList1[i] - mean1) * (scoreList2[i] - mean2);
-            sqmag1 += (scoreList1[i] - mean1) * (scoreList1[i] - mean1);
-            sqmag2 += (scoreList2[i] - mean2) * (scoreList2[i] - mean2); 
-        }
+      for (i = 0; i < scoreList1.length; i++) {
+        product += (scoreList1[i] - mean1) * (scoreList2[i] - mean2);
+        sqmag1 += (scoreList1[i] - mean1) * (scoreList1[i] - mean1);
+        sqmag2 += (scoreList2[i] - mean2) * (scoreList2[i] - mean2);
+      }
 
-        var similarity = product / Math.sqrt(sqmag1 * sqmag2);
-        return similarity * 100 / 2 + 50;
+      var similarity = product / Math.sqrt(sqmag1 * sqmag2);
+      return similarity * 100 / 2 + 50;
+    },
+
+    getCompatStyle: function(percent) {
+
+      if (!percent) {
+        return {
+          color: 'brown',
+          phrase: 'Unknown'
+        };
+      }
+
+      var compare = function(pair) {
+        return percent >= pair[0];
+      };
+
+      var colorMap = [
+        [90, 'limegreen'],
+        [70, 'green'],
+        [50, 'blue'],
+        [30, 'red'],
+        [0, 'brown']
+      ];
+
+      var phraseMap = [
+        [90, 'Extremely High'],
+        [85, 'High'],
+        [75, 'Somewhat High'],
+        [65, 'Medium High'],
+        [55, 'Medium'],
+        [40, 'Somewhat Low'],
+        [30, 'Low'],
+        [0, 'Abysmally Low']
+      ];
+
+      return {
+        color: colorMap.filter(compare)[0][1],
+        phrase: phraseMap.filter(compare)[0][1]
+      };
+
     },
 
     compareLists: function(compareData) {
@@ -224,7 +263,8 @@
         user1Incomplete = [],
         user2Incomplete = [],
         bothIncomplete = [],
-        bothRated = [];
+        bothRated = [],
+        compat = {};
 
       list1.forEach(function(anime1) { // loop through the first list
         list2.some(function(anime2) { // loop through the second list
@@ -241,12 +281,20 @@
               bothCompleted.push([anime1, anime2]);
             }
             if (anime1.rating && anime2.rating) {
-                bothRated.push([anime1, anime2]);
+              bothRated.push([anime1, anime2]);
             }
             return true; // start looking for next match
           }
         });
       });
+
+      // get percent and determine color
+      // compat.percent = self.calculateCompatability(bothRated);
+      compat.percent = 50;
+      compat.style = self.getCompatStyle(compat.percent);
+
+      // format percent
+      compat.percent = (compat.percent ? compat.percent.toFixed(2) + '%' : 'Not enough in common.');
 
       return Promise.props({
 
@@ -257,7 +305,7 @@
         user1Incomplete: self.processOneIncompleteList(user1Incomplete, compareData.titlePref),
         user2Incomplete: self.processOneIncompleteList(user2Incomplete, compareData.titlePref),
         bothIncomplete: self.processBothIncompleteList(bothIncomplete, compareData.titlePref),
-        compatability: self.calculateCompatability(bothRated)
+        compat: compat
       });
     }
   };
@@ -341,9 +389,10 @@
           // try displaying the comparison
           self.displayComparison(user1, user2).done(
             self.toggleLoading.bind(self, 'hide'), // success
-            function() { // error
+            function(e) { // error
               self.toggleLoading('hide');
               self.error('Failed to get list data, check the usernames and try again.');
+              throw e;
             }
           );
         } else {
