@@ -1,6 +1,6 @@
 <?php
 function getDefault($array, $key, $default) {
-    return isset($array[$key]) ? $array[$key] : $default;
+  return isset($array[$key]) ? $array[$key] : $default;
 }
 
 header("Access-Control-Allow-Origin: *");
@@ -15,15 +15,15 @@ $status = rawurlencode(getDefault($_GET, "status", "Completed"));
 
 $api_path = "library_entries";
 if($type == "manga") {
-	$api_path = "manga_library_entries";
+  $api_path = "manga_library_entries";
 }
 
 if($status == "all") {
-	$data = file_get_contents("$api_root$api_path?user_id=$user_id");
+  $data = file_get_contents("$api_root$api_path?user_id=$user_id");
 } else {
-	$data = file_get_contents("$api_root$apit_path?user_id=$user_id&status=$status");
+  $data = file_get_contents("$api_root$apit_path?user_id=$user_id&status=$status");
 }
 ?>
 <pre>
-<?php echo $data ?>
+  <?php echo $data ?>
 </pre>
