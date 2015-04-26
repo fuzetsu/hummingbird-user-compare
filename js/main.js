@@ -389,7 +389,7 @@
       this.txtUser1.value = query.user1 || '';
       this.txtUser2.value = query.user2 || '';
       this.ddlTitles.value = localStorage.hbirdTitlePref || 'canonical';
-      this.ddlListType.value = localStorage.hbirdListTypePref || 'anime';
+      this.ddlListType.value = query.type || localStorage.hbirdListTypePref || 'anime';
     },
 
     bindEvents: function() {
