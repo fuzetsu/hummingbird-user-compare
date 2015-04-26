@@ -39,7 +39,11 @@
         xhr.addEventListener('error', reject);
         xhr.addEventListener('load', function() {
           if (xhr.response.title.indexOf('404') !== -1) {
-            reject('user "' + username + '" does not exist');
+            reject({
+              code: 'no-such-user',
+              data: username,
+              message: 'user "' + username + '" does not exist'
+            });
           } else {
             resolve(JSON.parse(xhr.response.querySelector('pre').textContent));
           }
@@ -414,8 +418,12 @@
             self.toggleLoading.bind(self, 'hide'), // success
             function(e) { // error
               self.toggleLoading('hide');
-              self.error('Failed to get list data, check the usernames and try again.');
-              throw e;
+              if (e.code && e.code === 'no-such-user') {
+                self.error('User "' + e.data + '" does not exist, fix the name and try again.');
+              } else {
+                self.error('Failed to get list data, check the usernames and try again.');
+              }
+              console.error(e);
             }
           );
         } else {
