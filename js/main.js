@@ -434,7 +434,7 @@
 
       self.btnShare.addEventListener('click', function() {
         Modal.open({
-          content: '<div class="pure-form"><input type="text" value="http://fuzetsu.github.io/hummingbird-user-compare/?user1=' + self.txtUser1.value + '&user2=' + self.txtUser2.value + '&type=' + self.ddlListType.value + '" size=90 onClick="this.setSelectionRange(0, this.value.length)" readonly/></div>'
+          content: '<div class="pure-form"><input type="text" value="http://fuzetsu.github.io/hummingbird-user-compare/?user1=' + self.txtUser1.value + '&user2=' + self.txtUser2.value + '&type=' + self.ddlListType.value + '" size=90 oncontextmenu="this.setSelectionRange(0, this.value.length)" onclick="this.setSelectionRange(0, this.value.length)" readonly/></div>'
         });
       });
     },
