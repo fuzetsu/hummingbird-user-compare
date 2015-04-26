@@ -161,8 +161,8 @@
         return {
           title: hb.getTitle(anime1, titlePref),
           url: hb.ANIME_URL + anime1.anime_id,
-          epswatched1: (anime1.episodes_watched || anime1.chapters_read) + '/' + (anime1.episode_count || anime1.chapter_count || '?'),
-          epsWatchedSort1: anime1.episodes_watched || anime1.chapters_read,
+          epswatched1: (anime1.episodes_watched || anime1.chapters_read || 0) + '/' + (anime1.episode_count || anime1.chapter_count || '?'),
+          epsWatchedSort1: anime1.episodes_watched || anime1.chapters_read || 0,
           status1: anime1.status,
           status2: anime2.status,
           rating2: anime2.rating || '-',
@@ -178,11 +178,11 @@
         return {
           title: hb.getTitle(anime1, titlePref),
           url: hb.ANIME_URL + anime1.anime_id,
-          epswatched1: (anime1.episodes_watched || anime1.chapters_read) + '/' + (anime1.episode_count || anime1.chapter_count || '?'),
-          epswatched2: (anime2.episodes_watched || anime1.chapters_read) + '/' + (anime2.episode_count || anime1.chapter_count || '?'),
-          epsWatchedSort1: anime1.episodes_watched || anime1.chapters_read,
-          epsWatchedSort2: anime2.episodes_watched || anime1.chapters_read,
-          epdiff: (anime1.episodes_watched || anime1.chapters_read) - (anime2.episodes_watched || anime1.chapters_read),
+          epswatched1: (anime1.episodes_watched || anime1.chapters_read || 0) + '/' + (anime1.episode_count || anime1.chapter_count || '?'),
+          epswatched2: (anime2.episodes_watched || anime1.chapters_read || 0) + '/' + (anime2.episode_count || anime1.chapter_count || '?'),
+          epsWatchedSort1: anime1.episodes_watched || anime1.chapters_read || 0,
+          epsWatchedSort2: anime2.episodes_watched || anime1.chapters_read || 0,
+          epdiff: (anime1.episodes_watched || anime1.chapters_read || 0) - (anime2.episodes_watched || anime2.chapters_read || 0),
           status1: anime1.status,
           status2: anime2.status
         };
