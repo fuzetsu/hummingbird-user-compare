@@ -180,6 +180,40 @@
       });
     },
 
+    calculateCompatability: function(list) {
+        if (list.length < 5) {
+            return "Unknown";
+        }
+        var scoreList1 = list.map(function(elem) {
+                return elem[0].rating;
+            }),
+            scoreList2 = list.map(function(elem) {
+                return elem[1].rating;
+            }),
+            mean1 = 0,
+            mean2 = 0,
+            product = 0,
+            sqmag1 = 0,
+            sqmag2 = 0,
+            i;
+
+        for (i = 0; i < scoreList1.length; i++) {
+            mean1 += scoreList1[i];
+            mean2 += scoreList2[i];
+        }
+        mean1 /= scoreList1.length;
+        mean2 /= scoreList2.length;
+
+        for (i = 0; i < scoreList1.length; i++) {
+            product += (scoreList1[i] - mean1) * (scoreList2[i] - mean2);
+            sqmag1 += (scoreList1[i] - mean1) * (scoreList1[i] - mean1);
+            sqmag2 += (scoreList2[i] - mean2) * (scoreList2[i] - mean2); 
+        }
+
+        var similarity = product / Math.sqrt(sqmag1 * sqmag2);
+        return similarity * 100 / 2 + 50;
+    },
+
     compareLists: function(compareData) {
 
       var self = this;
@@ -189,7 +223,8 @@
         bothCompleted = [],
         user1Incomplete = [],
         user2Incomplete = [],
-        bothIncomplete = [];
+        bothIncomplete = [],
+        bothRated = [];
 
       list1.forEach(function(anime1) { // loop through the first list
         list2.some(function(anime2) { // loop through the second list
@@ -205,6 +240,9 @@
             } else {
               bothCompleted.push([anime1, anime2]);
             }
+            if (anime1.rating && anime2.rating) {
+                bothRated.push([anime1, anime2]);
+            }
             return true; // start looking for next match
           }
         });
@@ -218,8 +256,8 @@
         bothCompleted: self.processCompletedList(bothCompleted, compareData.titlePref),
         user1Incomplete: self.processOneIncompleteList(user1Incomplete, compareData.titlePref),
         user2Incomplete: self.processOneIncompleteList(user2Incomplete, compareData.titlePref),
-        bothIncomplete: self.processBothIncompleteList(bothIncomplete, compareData.titlePref)
-
+        bothIncomplete: self.processBothIncompleteList(bothIncomplete, compareData.titlePref),
+        compatability: self.calculateCompatability(bothRated)
       });
     }
   };
@@ -249,7 +287,7 @@
     },
     qq: function(query, context) {
       return [].slice.call((context || document).querySelectorAll(query));
-    }
+    },
   };
 
   var UI = {
