@@ -289,8 +289,7 @@
       });
 
       // get percent and determine color
-      // compat.percent = self.calculateCompatability(bothRated);
-      compat.percent = 50;
+      compat.percent = self.calculateCompatability(bothRated);
       compat.style = self.getCompatStyle(compat.percent);
 
       // format percent
