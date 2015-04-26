@@ -161,8 +161,8 @@
         return {
           title: hb.getTitle(anime1, titlePref),
           url: hb.ANIME_URL + anime1.anime_id,
-          epswatched1: (anime1.episodes_watched || anime1.chapters_read || 0) + '/' + (anime1.episode_count || anime1.chapter_count || '?'),
-          epsWatchedSort1: anime1.episodes_watched || anime1.chapters_read || 0,
+          epswatched1: (anime1.episodes_watched || anime1.chapters_read) + '/' + (anime1.episode_count || anime1.chapter_count || '?'),
+          epsWatchedSort1: anime1.episodes_watched || anime1.chapters_read,
           status1: anime1.status,
           status2: anime2.status,
           rating2: anime2.rating || '-',
@@ -178,11 +178,11 @@
         return {
           title: hb.getTitle(anime1, titlePref),
           url: hb.ANIME_URL + anime1.anime_id,
-          epswatched1: (anime1.episodes_watched || anime1.chapters_read || 0) + '/' + (anime1.episode_count || anime1.chapter_count || '?'),
-          epswatched2: (anime2.episodes_watched || anime1.chapters_read || 0) + '/' + (anime2.episode_count || anime1.chapter_count || '?'),
-          epsWatchedSort1: anime1.episodes_watched || anime1.chapters_read || 0,
-          epsWatchedSort2: anime2.episodes_watched || anime1.chapters_read || 0,
-          epdiff: (anime1.episodes_watched || anime1.chapters_read || 0) - (anime2.episodes_watched || anime2.chapters_read || 0),
+          epswatched1: (anime1.episodes_watched || anime1.chapters_read) + '/' + (anime1.episode_count || anime1.chapter_count || '?'),
+          epswatched2: (anime2.episodes_watched || anime1.chapters_read) + '/' + (anime2.episode_count || anime1.chapter_count || '?'),
+          epsWatchedSort1: anime1.episodes_watched || anime1.chapters_read,
+          epsWatchedSort2: anime2.episodes_watched || anime1.chapters_read,
+          epdiff: (anime1.episodes_watched || anime1.chapters_read) - (anime2.episodes_watched || anime1.chapters_read),
           status1: anime1.status,
           status2: anime2.status
         };
@@ -381,6 +381,7 @@
       this.outputDiv = Util.q('#outputDiv');
       this.btnCompare = Util.q('#btnCompare');
       this.ddlListType = Util.q('#ddlListType');
+      this.btnShare = Util.q("#btnShare");
     },
 
     initForm: function() {
@@ -431,6 +432,11 @@
         localStorage.hbirdListTypePref = this.value;
       });
 
+      self.btnShare.addEventListener('click', function() {
+        Modal.open({
+          content: '<div class="pure-form"><input type="text" value="http://fuzetsu.github.io/hummingbird-user-compare/?user1=' + self.txtUser1.value + '&user2=' + self.txtUser2.value + '&type=' + self.ddlListType.value + '" size=90 onClick="this.setSelectionRange(0, this.value.length)" readonly/></div>'
+        });
+      });
     },
 
     toggleLoading: function(state) {
