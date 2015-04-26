@@ -38,7 +38,7 @@
         xhr.responseType = 'document';
         xhr.addEventListener('error', reject);
         xhr.addEventListener('load', function() {
-          if(xhr.response.title.indexOf('404') !== -1) {
+          if (xhr.response.title.indexOf('404') !== -1) {
             reject('user "' + username + '" does not exist');
           } else {
             resolve(JSON.parse(xhr.response.querySelector('pre').textContent));
