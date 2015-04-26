@@ -222,7 +222,7 @@
 
       if (!percent) {
         return {
-          color: 'brown',
+          color: 'black',
           phrase: 'Unknown'
         };
       }
@@ -232,21 +232,28 @@
       };
 
       var colorMap = [
-        [90, 'limegreen'],
-        [70, 'green'],
-        [50, 'blue'],
-        [30, 'red'],
-        [0, 'brown']
+        [90, '#FF0100'],
+        [80, '#FF2000'],
+        [75, '#FF4D00'],
+        [70, '#FF7900'],
+        [60, '#FFA200'],
+        [50, '#FAAE04'],
+        [40, '#AE8741'],
+        [30, '#7B636A'],
+        [20, '#4f428e'],
+        [0, '#2F2AA8']
       ];
 
       var phraseMap = [
-        [90, 'Extremely High'],
-        [85, 'High'],
-        [75, 'Somewhat High'],
-        [65, 'Medium High'],
-        [55, 'Medium'],
+        [90, 'Amazingly High'],
+        [80, 'Very High'],
+        [75, 'High'],
+        [70, 'Somewhat High'],
+        [60, 'Medium High'],
+        [50, 'Medium'],
         [40, 'Somewhat Low'],
         [30, 'Low'],
+        [20, 'Very Low'],
         [0, 'Abysmally Low']
       ];
 
