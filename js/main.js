@@ -42,7 +42,7 @@
           (new Image()).src = 'https://ga-beacon.appspot.com/UA-61974780-1/hummingbird-user-compare/LOAD_FAILED?pixel';
         });
         xhr.addEventListener('load', function() {
-          if (xhr.response.title.indexOf('404') !== -1) {
+          if (!xhr.response) {
             reject({
               code: 'no-such-user',
               data: username,
