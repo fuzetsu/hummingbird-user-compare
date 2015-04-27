@@ -39,6 +39,9 @@
         return entries.map(function(entry, idx) {
           var content = res[type][idx];
           entry.rating = self.c10p(entry.rating);
+          if(entry.rewatching) {
+            entry.status = "Completed";
+          }
           return Util.extend(entry, content);
         });
       });
