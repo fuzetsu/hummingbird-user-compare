@@ -4,6 +4,7 @@ function getDefault($array, $key, $default) {
 }
 
 header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json");
 
 $api_root = "https://hummingbird.me/";
 
@@ -21,9 +22,9 @@ if($type == "manga") {
 if($status == "all") {
   $data = file_get_contents("$api_root$api_path?user_id=$user_id");
 } else {
-  $data = file_get_contents("$api_root$apit_path?user_id=$user_id&status=$status");
+  $data = file_get_contents("$api_root$api_path?user_id=$user_id&status=$status");
 }
+
+echo $data;
+
 ?>
-<pre>
-  <?php echo $data ?>
-</pre>

@@ -34,8 +34,8 @@
 
       return new Promise(function(resolve, reject) {
         var xhr = new XMLHttpRequest();
-        xhr.open('get', 'http://fuzetsu.site90.net/hb.php?user_id=' + encodeURIComponent(username) + '&type=' + encodeURIComponent(type) + '&status=all');
-        xhr.responseType = 'document';
+        xhr.open('get', 'http://hummingbird-compare.herokuapp.com/server/hb.php?user_id=' + encodeURIComponent(username) + '&type=' + encodeURIComponent(type) + '&status=all');
+        xhr.responseType = 'json';
         xhr.addEventListener('error', function() {
           reject(xhr);
           // TODO: remove this and upgrade server
@@ -49,7 +49,7 @@
               message: 'user "' + username + '" does not exist'
             });
           } else {
-            resolve(JSON.parse(xhr.response.querySelector('pre').textContent));
+            resolve(xhr.response);
           }
         });
         xhr.send();
