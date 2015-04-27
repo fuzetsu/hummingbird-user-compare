@@ -210,7 +210,7 @@
            [40, '#AE8741'],
            [30, '#7B636A'],
            [20, '#4f428e'],
-           [0, '#2F2AA8']
+           [0,  '#2F2AA8']
           ],
           phraseMap = [
            [90, 'Amazingly High'],
@@ -222,7 +222,7 @@
            [40, 'Somewhat Low'],
            [30, 'Low'],
            [20, 'Very Low'],
-           [0, 'Abysmally Low']
+           [0,  'Abysmally Low']
           ];
 
       return {
