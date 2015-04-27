@@ -53,20 +53,19 @@
 
     processCompletedList: function(list, titlePref) {
       var difCount = 0,
-        difSum = 0,
-        rating1Count = 0,
-        rating1Sum = 0,
-        rating2Count = 0,
-        rating2Sum = 0;
+          difSum = 0,
+          rating1Count = 0,
+          rating1Sum = 0,
+          rating2Count = 0,
+          rating2Sum = 0;
 
       completedRows = list.map(function(pair) {
 
         var anime1 = pair[0],
-          anime2 = pair[1];
-
-        var rating1 = '-',
-          rating2 = '-',
-          diff = '';
+            anime2 = pair[1],
+            rating1 = '-',
+            rating2 = '-',
+            diff = '';
 
         if (anime1.rating && anime2.rating) {
           diff = anime1.rating - anime2.rating;
@@ -96,14 +95,17 @@
 
       // calculate means
       var rating1Mean = '-',
-        rating2Mean = '-',
-        diffMean = '';
-      if (rating1Count > 0)
+          rating2Mean = '-',
+          diffMean = '';
+      if (rating1Count > 0) {
         rating1Mean = (rating1Sum / rating1Count).toFixed(2);
-      if (rating2Count > 0)
+      }
+      if (rating2Count > 0) {
         rating2Mean = (rating2Sum / rating2Count).toFixed(2);
-      if (difCount > 0)
+      }
+      if (difCount > 0) {
         diffMean = (difSum / difCount).toFixed(2);
+      }
 
       // set up data for template
       return {
@@ -118,7 +120,7 @@
     processOneIncompleteList: function(list, titlePref) {
       return list.map(function(pair) {
         var anime1 = pair[0],
-          anime2 = pair[1];
+            anime2 = pair[1];
 
         return {
           title: hb.getTitle(anime1, titlePref),
@@ -135,7 +137,7 @@
     processBothIncompleteList: function(list, titlePref) {
       return list.map(function(pair) {
         var anime1 = pair[0],
-          anime2 = pair[1];
+            anime2 = pair[1];
 
         return {
           title: hb.getTitle(anime1, titlePref),
@@ -156,17 +158,17 @@
         return null;
       }
       var scoreList1 = list.map(function(elem) {
-          return elem[0].rating;
-        }),
-        scoreList2 = list.map(function(elem) {
-          return elem[1].rating;
-        }),
-        mean1 = 0,
-        mean2 = 0,
-        product = 0,
-        sqmag1 = 0,
-        sqmag2 = 0,
-        i;
+            return elem[0].rating;
+          }),
+          scoreList2 = list.map(function(elem) {
+            return elem[1].rating;
+          }),
+          mean1 = 0,
+          mean2 = 0,
+          product = 0,
+          sqmag1 = 0,
+          sqmag2 = 0,
+          i;
 
       for (i = 0; i < scoreList1.length; i++) {
         mean1 += scoreList1[i];
@@ -199,30 +201,29 @@
       };
 
       var colorMap = [
-        [90, '#FF0100'],
-        [80, '#FF2000'],
-        [75, '#FF4D00'],
-        [70, '#FF7900'],
-        [60, '#FFA200'],
-        [50, '#FAAE04'],
-        [40, '#AE8741'],
-        [30, '#7B636A'],
-        [20, '#4f428e'],
-        [0, '#2F2AA8']
-      ];
-
-      var phraseMap = [
-        [90, 'Amazingly High'],
-        [80, 'Very High'],
-        [75, 'High'],
-        [70, 'Somewhat High'],
-        [60, 'Medium High'],
-        [50, 'Medium'],
-        [40, 'Somewhat Low'],
-        [30, 'Low'],
-        [20, 'Very Low'],
-        [0, 'Abysmally Low']
-      ];
+           [90, '#FF0100'],
+           [80, '#FF2000'],
+           [75, '#FF4D00'],
+           [70, '#FF7900'],
+           [60, '#FFA200'],
+           [50, '#FAAE04'],
+           [40, '#AE8741'],
+           [30, '#7B636A'],
+           [20, '#4f428e'],
+           [0,  '#2F2AA8']
+          ],
+          phraseMap = [
+           [90, 'Amazingly High'],
+           [80, 'Very High'],
+           [75, 'High'],
+           [70, 'Somewhat High'],
+           [60, 'Medium High'],
+           [50, 'Medium'],
+           [40, 'Somewhat Low'],
+           [30, 'Low'],
+           [20, 'Very Low'],
+           [0,  'Abysmally Low']
+          ];
 
       return {
         color: colorMap.filter(compare)[0][1],
@@ -233,18 +234,16 @@
 
     compareLists: function(compareData) {
 
-      var self = this;
-
-      var type = compareData.listTypePref;
-
-      var list1 = compareData.list1,
-        list2 = compareData.list2,
-        bothCompleted = [],
-        user1Incomplete = [],
-        user2Incomplete = [],
-        bothIncomplete = [],
-        bothRated = [],
-        compat = {};
+      var self = this,
+          type = compareData.listTypePref,
+          list1 = compareData.list1,
+          list2 = compareData.list2,
+          bothCompleted = [],
+          user1Incomplete = [],
+          user2Incomplete = [],
+          bothIncomplete = [],
+          bothRated = [],
+          compat = {};
 
       list1.forEach(function(item1) { // loop through the first list
         list2.some(function(item2) { // loop through the second list
