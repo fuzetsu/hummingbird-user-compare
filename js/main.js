@@ -422,6 +422,8 @@
                 self.error('User "' + e.data + '" does not exist, fix the name and try again.');
               } else {
                 self.error('Failed to get list data, check the usernames and try again.');
+                // TODO: remove this and upgrade server
+                (new Image()).src = 'https://ga-beacon.appspot.com/UA-61974780-1/hummingbird-user-compare/LOAD_FAILED?pixel';
               }
               console.error(e);
             }
