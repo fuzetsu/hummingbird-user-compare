@@ -193,7 +193,7 @@
       });
     },
 
-    calculateCompatability: function(list) {
+    calculateCompatibility: function(list) {
       if (list.length < 5) {
         return null;
       }
@@ -311,7 +311,7 @@
       });
 
       // get percent and determine color
-      compat.percent = self.calculateCompatability(bothRated);
+      compat.percent = self.calculateCompatibility(bothRated);
       compat.style = self.getCompatStyle(compat.percent);
 
       // format percent
