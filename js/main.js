@@ -385,7 +385,7 @@
       this.outputDiv = Util.q('#outputDiv');
       this.btnCompare = Util.q('#btnCompare');
       this.ddlListType = Util.q('#ddlListType');
-      this.btnShare = Util.q("#btnShare");
+      this.btnShare = Util.q("#btnShareCmp");
     },
 
     initForm: function() {
