@@ -34,7 +34,7 @@
 
       return new Promise(function(resolve, reject) {
         var xhr = new XMLHttpRequest();
-        xhr.open('get', 'http://hummingbird-compare.herokuapp.com/server/hb.php?user_id=' + encodeURIComponent(username) + '&type=' + encodeURIComponent(type) + '&status=all');
+        xhr.open('get', 'https://hummingbird-compare.herokuapp.com/server/hb.php?user_id=' + encodeURIComponent(username) + '&type=' + encodeURIComponent(type) + '&status=all');
         xhr.responseType = 'json';
         xhr.addEventListener('error', function() {
           reject(xhr);
@@ -446,7 +446,7 @@
 
       self.btnShare.addEventListener('click', function() {
         Modal.open({
-          content: '<div class="pure-form"><input type="text" value="http://fuzetsu.github.io/hummingbird-user-compare/?user1=' + self.txtUser1.value + '&user2=' + self.txtUser2.value + '&type=' + self.ddlListType.value + '" size=90 oncontextmenu="this.setSelectionRange(0, this.value.length)" onclick="this.setSelectionRange(0, this.value.length)" readonly/></div>'
+          content: '<div class="pure-form"><input type="text" value="https://fuzetsu.github.io/hummingbird-user-compare/?user1=' + self.txtUser1.value + '&user2=' + self.txtUser2.value + '&type=' + self.ddlListType.value + '" size=90 oncontextmenu="this.setSelectionRange(0, this.value.length)" onclick="this.setSelectionRange(0, this.value.length)" readonly/></div>'
         });
       });
     },
