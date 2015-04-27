@@ -376,7 +376,7 @@
               if (e.code && e.code === 'no-such-user') {
                 self.error('User "' + e.data + '" does not exist, fix the name and try again.');
               } else {
-                self.error('Failed to get list data, check the usernames and try again.');
+                self.error('Failed to get list data, please try again.');
               }
               console.error(e);
             }
