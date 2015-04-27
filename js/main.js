@@ -2,30 +2,11 @@
 
   var hb = {
 
-    API_URL: 'https://hummingbirdv1.p.mashape.com',
-    API_KEY: 'lbeDVnfAkWmsh7aYsrc87ScESQe0p1qlpj4jsnIMayh3tGQNE0',
     ANIME_URL: 'https://hummingbird.me/anime/',
 
     // convert to 10 point scoring
     c10p: function(score) {
       return score && parseFloat(score) * 2;
-    },
-
-    sendAPIRequest: function(method, url, data) {
-
-      var self = this;
-
-      return new Promise(function(resolve, reject) {
-        var xhr = new XMLHttpRequest();
-        xhr.open(method, self.API_URL + url, true);
-        xhr.responseType = 'json';
-        xhr.addEventListener('error', reject);
-        xhr.addEventListener('load', function() {
-          resolve(xhr.response);
-        });
-        xhr.setRequestHeader('X-Mashape-Key', self.API_KEY);
-        xhr.send(data);
-      });
     },
 
     getListByProxy: function(username, type) {
@@ -61,36 +42,6 @@
           return Util.extend(entry, content);
         });
       });
-    },
-
-    getAnimeList: function(username) {
-
-      var self = this;
-
-      return self
-        .sendAPIRequest('get', '/users/' + username + '/library', null)
-        .map(function(entry) {
-          return {
-            slug: entry.anime.slug,
-            title: entry.anime.title,
-            status: entry.status,
-            rating: self.c10p(entry.rating.value)
-          };
-        });
-    },
-
-    getAnime: function(slug, titleLanguage) {
-
-      var self = this;
-
-      return self
-        .sendAPIRequest('get', '/anime/' + slug + '?title_language_preference=' + titleLanguage, null)
-        .then(function(anime) {
-          return {
-            slug: anime.slug,
-            title: anime.title
-          };
-        });
     },
 
     getTitle: function(content, preference) {
