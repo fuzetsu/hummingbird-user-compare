@@ -9,6 +9,20 @@
       return score && parseFloat(score) * 2;
     },
 
+    getComponent: function(component, user1, user2) {
+      return new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('get', 'api/' + component);
+        xhr.responseType = 'text';
+        xhr.onerror = reject;
+        xhr.onload = function() {
+          var div = document.createElement('div');
+          div.innerHTML = xhr.responseText;
+          resolve(div);
+        };
+      });
+    },
+
     getListByProxy: function(username, type) {
 
       var self = this;

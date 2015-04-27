@@ -1,0 +1,51 @@
+doctype html
+html(lang="en")
+  head
+    title Hummingbird User Comparison
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    link(rel='shortcut icon', href='img/favicon.ico', type='image/x-icon')
+    link(rel='icon', href='img/favicon.ico', type='image/x-icon')
+    link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/pure-min.css')
+    link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/grids-responsive-min.css')
+    link(rel='stylesheet', href='css/jsmodal-light.css')
+    link(rel='stylesheet', href='css/main.css')
+  body
+    h1.header
+      img(height='50', width='50', src='img/hummingbird-small-right.png', alt='hummingbird icon facing right')
+      span Hummingbird User Comparison
+      img(height='50', width='50', src='img/hummingbird-small-left.png', alt='hummingbird icon facing left')
+    .content
+      form#formCompare.form-compare.pure-form.tac
+
+        input#txtUser1(type='text', size='10', placeholder='User 1')
+
+        input#txtUser2(type='text', size='10', placeholder='User 2')
+
+        select#ddlListType(title='List Type')
+          option(disabled) List Type
+          option(value='anime', selected) Anime
+          option(value='manga') Manga
+
+        select#ddlTitles(title='Title Format')
+          option(disabled) Title Format
+          option(value='canonical', selected) Canonical
+          option(value='english') English
+          option(value='romaji') Romanized
+
+        button#btnCompare.pure-button.pure-button-primary(type='submit') Compare
+        button#btnShareCmp.pure-button Share
+
+      br
+      .tac
+        img.loading-indicator(src='img/loading.gif', alt='loading', hidden='')
+
+      #outputDiv.transition
+    a(href='https://github.com/fuzetsu/hummingbird-user-compare')
+      img(style='position: absolute; top: 0; right: 0; border: 0;', src='https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67', alt='Fork me on GitHub', data-canonical-src='https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png')
+    script(src='//cdnjs.cloudflare.com/ajax/libs/bluebird/1.2.2/bluebird.min.js')
+    script(src='//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js')
+    script(src='js/sorttable.js')
+    script(src='js/jsmodal-1.0d.js')
+    script(src='js/main.js')
+    // tracker beacon
+    img(style='display:none;', src='https://ga-beacon.appspot.com/UA-61974780-1/hummingbird-user-compare/index.html?pixel')

@@ -1,0 +1,17 @@
+{
+  "name": "hummingbird-user-compare",
+  "description": "compares the anime/manga lists of two hummingbird.me users",
+  "repository": "https://github.com/fuzetsu/hummingbird-user-compare.git",
+  "version": "1.0.1",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": "0.12.x"
+  },
+  "dependencies": {
+    "express": "^4.12.3",
+    "jade": "^1.9.2",
+    "request": "^2.55.0"
+  }
+}
