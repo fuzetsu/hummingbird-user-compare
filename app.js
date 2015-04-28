@@ -2,6 +2,7 @@ var hb = require('./lib/hb');
 
 var express = require('express');
 var app = express();
+var port = process.env.PORT || 3000;
 var server;
 
 app.use(express.static(__dirname + '/public'));
@@ -59,4 +60,4 @@ app.get('/library/:type/:user', function(req, res) {
 
 });
 
-server = app.listen(80);
+server = app.listen(port);
