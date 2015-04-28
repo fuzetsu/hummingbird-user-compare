@@ -17,11 +17,7 @@
         var xhr = new XMLHttpRequest();
         xhr.open('get', 'https://hummingbird-compare.herokuapp.com/server/hb.php?user_id=' + encodeURIComponent(username) + '&type=' + encodeURIComponent(type) + '&status=all');
         xhr.responseType = 'json';
-        xhr.addEventListener('error', function() {
-          reject(xhr);
-          // TODO: remove this and upgrade server
-          (new Image()).src = 'https://ga-beacon.appspot.com/UA-61974780-1/hummingbird-user-compare/LOAD_FAILED?pixel';
-        });
+        xhr.addEventListener('error', reject);
         xhr.addEventListener('load', function() {
           if (!xhr.response) {
             reject({
