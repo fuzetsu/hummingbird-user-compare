@@ -39,7 +39,7 @@
         return entries.map(function(entry, idx) {
           var content = res[type][idx];
           entry.rating = self.c10p(entry.rating);
-          if(entry.rewatching) {
+          if (entry.rewatching) {
             entry.status = "Completed";
           }
           return Util.extend(entry, content);
@@ -152,26 +152,30 @@
     },
 
     calculateCompatibility: function(list) {
+
+      // only bother comparing if there are more than 5 items
       if (list.length < 5) {
         return null;
       }
-      var scoreList1 = list.map(function(elem) {
-          return elem[0].rating;
-        }),
-        scoreList2 = list.map(function(elem) {
-          return elem[1].rating;
-        }),
+
+      var scoreList1 = [],
+        scoreList2 = [],
         mean1 = 0,
         mean2 = 0,
         product = 0,
         sqmag1 = 0,
         sqmag2 = 0,
-        i;
+        i, similarity;
 
-      for (i = 0; i < scoreList1.length; i++) {
-        mean1 += scoreList1[i];
-        mean2 += scoreList2[i];
-      }
+      list.forEach(function(item) {
+        var rating1 = item[0].rating;
+        var rating2 = item[1].rating;
+        scoreList1.push(rating1);
+        scoreList2.push(rating2);
+        mean1 += rating1;
+        mean2 += rating2;
+      });
+
       mean1 /= scoreList1.length;
       mean2 /= scoreList2.length;
 
@@ -181,8 +185,10 @@
         sqmag2 += (scoreList2[i] - mean2) * (scoreList2[i] - mean2);
       }
 
-      var similarity = product / Math.sqrt(sqmag1 * sqmag2);
+      similarity = product / Math.sqrt(sqmag1 * sqmag2);
+
       return similarity * 100 / 2 + 50;
+
     },
 
     getCompatStyle: function(percent) {
@@ -190,7 +196,8 @@
       if (!percent) {
         return {
           color: 'black',
-          phrase: 'Unknown'
+          phrase: 'Unknown',
+          percent: 'Not enough in common'
         };
       }
 
@@ -226,7 +233,9 @@
 
       return {
         color: colorMap.filter(compare)[0][1],
-        phrase: phraseMap.filter(compare)[0][1]
+        phrase: phraseMap.filter(compare)[0][1],
+        percent: percent.toFixed(2) + '%',
+        value: percent
       };
 
     },
@@ -244,7 +253,7 @@
         user2Incomplete = [],
         bothIncomplete = [],
         bothRated = [],
-        compat = {};
+        compat;
 
       list1.forEach(function(item1) { // loop through the first list
         list2.some(function(item2) { // loop through the second list
@@ -268,13 +277,6 @@
         });
       });
 
-      // get percent and determine color
-      compat.percent = self.calculateCompatibility(bothRated);
-      compat.style = self.getCompatStyle(compat.percent);
-
-      // format percent
-      compat.percent = (compat.percent ? compat.percent.toFixed(2) + '%' : 'Not enough in common.');
-
       return Promise.props({
 
         type: type.charAt(0).toUpperCase() + type.slice(1),
@@ -287,7 +289,11 @@
         user1Incomplete: self.processOneIncompleteList(user1Incomplete, compareData.titlePref),
         user2Incomplete: self.processOneIncompleteList(user2Incomplete, compareData.titlePref),
         bothIncomplete: self.processBothIncompleteList(bothIncomplete, compareData.titlePref),
-        compat: compat
+
+        compat: self.getCompatStyle(
+          self.calculateCompatibility(bothRated)
+        )
+
       });
     }
   };
