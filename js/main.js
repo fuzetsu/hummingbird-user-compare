@@ -14,6 +14,7 @@
       var self = this;
 
       return new Promise(function(resolve, reject) {
+
         var xhr = new XMLHttpRequest();
         xhr.open('get', 'https://hummingbird-compare.herokuapp.com/server/hb.php?user_id=' + encodeURIComponent(username) + '&type=' + encodeURIComponent(type) + '&status=all');
         xhr.responseType = 'json';
@@ -30,16 +31,22 @@
           }
         });
         xhr.send();
+
       }).then(function(res) {
-        var entries = res.library_entries || res.manga_library_entries;
+
+        var entries = res.library_entries || res.manga_library_entries,
+          content = res[type];
+
         return entries.map(function(entry, idx) {
-          var content = res[type][idx];
+
           entry.rating = self.c10p(entry.rating);
           if (entry.rewatching) {
             entry.status = "Completed";
           }
-          return Util.extend(entry, content);
+          return Util.extend(entry, content[idx]);
+
         });
+
       });
     },
 
@@ -48,6 +55,7 @@
     },
 
     processCompletedList: function(list, titlePref) {
+
       var difCount = 0,
         difSum = 0,
         rating1Count = 0,
@@ -94,14 +102,17 @@
       var rating1Mean = '-',
         rating2Mean = '-',
         diffMean = '';
-      if (rating1Count > 0)
-        rating1Mean = (rating1Sum / rating1Count).toFixed(2);
-      if (rating2Count > 0)
-        rating2Mean = (rating2Sum / rating2Count).toFixed(2);
-      if (difCount > 0)
-        diffMean = (difSum / difCount).toFixed(2);
 
-      // set up data for template
+      if (rating1Count > 0) {
+        rating1Mean = (rating1Sum / rating1Count).toFixed(2);
+      }
+      if (rating2Count > 0) {
+        rating2Mean = (rating2Sum / rating2Count).toFixed(2);
+      }
+      if (difCount > 0) {
+        diffMean = (difSum / difCount).toFixed(2);
+      }
+
       return {
         rows: completedRows,
         rating1Mean: rating1Mean,
@@ -112,38 +123,57 @@
     },
 
     processOneIncompleteList: function(list, titlePref) {
+
       return list.map(function(pair) {
+
         var anime1 = pair[0],
-          anime2 = pair[1];
+          anime2 = pair[1],
+          epswatched1 = anime1.episodes_watched || anime1.chapters_read || 0,
+          count = anime1.episode_count || anime1.chapter_count || '?';
 
         return {
+
           title: hb.getTitle(anime1, titlePref),
           url: hb.ANIME_URL + anime1.anime_id,
-          epswatched1: (anime1.episodes_watched || anime1.chapters_read || 0) + '/' + (anime1.episode_count || anime1.chapter_count || '?'),
-          epsWatchedSort1: anime1.episodes_watched || anime1.chapters_read || 0,
+
+          epswatched1: epswatched1 + '/' + count,
+          epsWatchedSort1: epswatched1,
+
           status1: anime1.status,
           status2: anime2.status,
+
           rating2: anime2.rating || '-',
+
         };
       });
+
     },
 
     processBothIncompleteList: function(list, titlePref) {
       return list.map(function(pair) {
+
         var anime1 = pair[0],
-          anime2 = pair[1];
+          anime2 = pair[1],
+          epswatched1 = anime1.episodes_watched || anime1.chapters_read || 0,
+          epswatched2 = anime2.episodes_watched || anime2.chapters_read || 0,
+          count = anime1.episode_count || anime1.chapter_count || '?';
 
         return {
+
           title: hb.getTitle(anime1, titlePref),
           url: hb.ANIME_URL + anime1.anime_id,
-          epswatched1: (anime1.episodes_watched || anime1.chapters_read || 0) + '/' + (anime1.episode_count || anime1.chapter_count || '?'),
-          epswatched2: (anime2.episodes_watched || anime2.chapters_read || 0) + '/' + (anime2.episode_count || anime2.chapter_count || '?'),
-          epsWatchedSort1: anime1.episodes_watched || anime1.chapters_read || 0,
-          epsWatchedSort2: anime2.episodes_watched || anime2.chapters_read || 0,
-          epdiff: (anime1.episodes_watched || anime1.chapters_read || 0) - (anime2.episodes_watched || anime2.chapters_read || 0),
+
+          epswatched1: epswatched1 + '/' + count,
+          epswatched2: epswatched2 + '/' + count,
+          epsWatchedSort1: epswatched1,
+          epsWatchedSort2: epswatched2,
+          epdiff: epswatched1 - epswatched2,
+
           status1: anime1.status,
           status2: anime2.status
+
         };
+
       });
     },
 
@@ -251,9 +281,10 @@
         bothRated = [],
         compat;
 
-      list1.forEach(function(item1) { // loop through the first list
-        list2.some(function(item2) { // loop through the second list
-          if (item1.id === item2.id) { // we found a match
+      // sorts the user lists into their corresponding divs
+      list1.forEach(function(item1) {
+        list2.some(function(item2) {
+          if (item1.id === item2.id) {
             if (item1.status !== 'Completed') {
               if (item2.status !== 'Completed') {
                 bothIncomplete.push([item1, item2]);
@@ -268,7 +299,7 @@
             if (item1.rating && item2.rating) {
               bothRated.push([item1, item2]);
             }
-            return true; // start looking for next match
+            return true;
           }
         });
       });
@@ -291,10 +322,13 @@
         )
 
       });
+
     }
+
   };
 
   var Util = {
+
     parseQuery: function() {
       var query = {};
       window.location.href.slice(window.location.href.lastIndexOf('?') + 1)
@@ -305,6 +339,7 @@
         });
       return query;
     },
+
     extend: function(orig, ext) {
       var key;
       for (key in ext) {
@@ -314,17 +349,21 @@
       }
       return orig;
     },
+
     q: function(query, context) {
       return (context || document).querySelector(query);
     },
+
     qq: function(query, context) {
       return [].slice.call((context || document).querySelectorAll(query));
     },
+
   };
 
   var UI = {
 
     init: function() {
+
       this.setupRefs();
       this.initForm();
       this.bindEvents();
@@ -334,9 +373,12 @@
       if (this.txtUser1.value.trim() && this.txtUser2.value.trim()) {
         this.btnCompare.click();
       }
+
     },
 
     setupRefs: function() {
+
+      // cache DOM refs to all UI elements
       this.txtUser1 = Util.q('#txtUser1');
       this.txtUser2 = Util.q('#txtUser2');
       this.formCompare = Util.q('#formCompare');
@@ -346,15 +388,18 @@
       this.btnCompare = Util.q('#btnCompare');
       this.ddlListType = Util.q('#ddlListType');
       this.btnShare = Util.q("#btnShareCmp");
+
     },
 
     initForm: function() {
+
       // parse query string
       var query = Util.parseQuery();
       this.txtUser1.value = query.user1 || '';
       this.txtUser2.value = query.user2 || '';
       this.ddlTitles.value = localStorage.hbirdTitlePref || 'canonical';
       this.ddlListType.value = query.type || localStorage.hbirdListTypePref || 'anime';
+
     },
 
     bindEvents: function() {
@@ -362,20 +407,28 @@
       var self = this;
 
       self.formCompare.addEventListener('submit', function(e) {
+
         e.preventDefault();
+
         var user1 = self.txtUser1.value.trim(),
           user2 = self.txtUser2.value.trim();
+
         if (user1 && user2) {
+
           self.outputDiv.innerHTML = '';
+
           // Can't compare same user
           if (user1 === user2) {
-            self.error("Can\'t compare the same user.");
-            return;
+            self.error("Can't compare the same user.");
+            return false;
           }
-          self.toggleLoading('show');
+
           // try displaying the comparison
+          self.toggleLoading('show');
           self.displayComparison(user1, user2).done(
-            self.toggleLoading.bind(self, 'hide'), // success
+            // success: hide loading gif
+            self.toggleLoading.bind(self, 'hide'),
+            // fail: handle error
             function(e) { // error
               self.toggleLoading('hide');
               if (e.code && e.code === 'no-such-user') {
@@ -386,10 +439,13 @@
               console.error(e);
             }
           );
+
         } else {
           self.error('Enter two different usernames to compare.');
         }
+
         return false;
+
       });
 
       self.ddlTitles.addEventListener('change', function() {
@@ -405,9 +461,11 @@
           content: '<div class="pure-form"><input type="text" value="https://fuzetsu.github.io/hummingbird-user-compare/?user1=' + self.txtUser1.value + '&user2=' + self.txtUser2.value + '&type=' + self.ddlListType.value + '" size=90 oncontextmenu="this.setSelectionRange(0, this.value.length)" onclick="this.setSelectionRange(0, this.value.length)" readonly/></div>'
         });
       });
+
     },
 
     toggleLoading: function(state) {
+
       if (state === 'show') {
         this.loadingIndicator.removeAttribute('hidden');
         this.outputDiv.style.opacity = 0;
@@ -415,6 +473,7 @@
         this.loadingIndicator.setAttribute('hidden', '');
         this.outputDiv.style.opacity = 1;
       }
+
     },
 
     compileTemplates: function() {
@@ -431,6 +490,7 @@
 
       var type = UI.ddlListType.value;
 
+      // get lists, compare then, output them, sort them
       return Promise
         .all([hb.getListByProxy(user1, type), hb.getListByProxy(user2, type)])
         .then(function(lists) {
@@ -452,6 +512,7 @@
             sorttable.innerSortFunction.apply(table.querySelector('th'), []);
           });
         });
+
     },
 
     error: function(msg) {
