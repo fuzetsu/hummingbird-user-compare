@@ -10,8 +10,10 @@
     "node": "0.12.x"
   },
   "dependencies": {
+    "bluebird": "^2.9.24",
     "express": "^4.12.3",
     "jade": "^1.9.2",
-    "request": "^2.55.0"
+    "request": "^2.55.0",
+    "underscore": "^1.8.3"
   }
 }
