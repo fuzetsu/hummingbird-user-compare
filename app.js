@@ -52,6 +52,11 @@ app.get('/compatibility/:type', function(req, res) {
     } else {
       res.json(compat);
     }
+  }).catch(function(e) {
+    res.json({
+      status: 400,
+      message: e
+    });
   });
 
 });
