@@ -7,6 +7,12 @@ var server;
 
 app.use(express.static(__dirname + '/public'));
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 app.get('/', function(req, res) {
   res.render('index.jade', {
     pageTitle: 'Hello World'
@@ -41,7 +47,7 @@ app.get('/compatibility/:type', function(req, res) {
   }
 
   hb.compatibility(user1, user2, type).then(function(compat) {
-    if(wantsHtml) {
+    if (wantsHtml) {
       res.render('compat.jade', compat);
     } else {
       res.json(compat);
