@@ -63,7 +63,7 @@
         rating2Count = 0,
         rating2Sum = 0;
 
-      completedRows = list.map(function(pair) {
+      var completedRows = list.map(function(pair) {
 
         var anime1 = pair[0],
           anime2 = pair[1];
