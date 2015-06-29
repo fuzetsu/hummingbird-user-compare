@@ -170,7 +170,30 @@
           epdiff: epswatched1 - epswatched2,
 
           status1: anime1.status,
-          status2: anime2.status
+          status2: anime2.status,
+
+        };
+
+      });
+    },
+
+    processNotInList: function(list, titlePref) {
+      return list.map(function(anime) {
+
+        var epswatched = anime.episodes_watched || anime.chapters_read || 0,
+          count = anime.episode_count || anime.chapter_count || '?';
+
+        return {
+
+          title: hb.getTitle(anime, titlePref),
+          url: hb.ANIME_URL + anime.anime_id,
+
+          epswatched: epswatched + '/' + count,
+          epsWatchedSort: epswatched,
+
+          status: anime.status,
+
+          rating: anime.rating || '-',
 
         };
 
@@ -279,11 +302,13 @@
         user2Incomplete = [],
         bothIncomplete = [],
         bothRated = [],
+        notInUser1 = [],
+        notInUser2 = [],
         compat;
 
       // sorts the user lists into their corresponding divs
       list1.forEach(function(item1) {
-        list2.some(function(item2) {
+        var found = list2.some(function(item2) {
           if (item1.id === item2.id) {
             if (item1.status !== 'Completed') {
               if (item2.status !== 'Completed') {
@@ -299,9 +324,17 @@
             if (item1.rating && item2.rating) {
               bothRated.push([item1, item2]);
             }
+            item2.was_sorted = true;
             return true;
           }
         });
+        if(!found) {
+          notInUser2.push(item1);
+        }
+      });
+
+      notInUser1 = list2.filter(function(item) {
+        return !item.was_sorted;
       });
 
       return Promise.props({
@@ -316,6 +349,9 @@
         user1Incomplete: self.processOneIncompleteList(user1Incomplete, compareData.titlePref),
         user2Incomplete: self.processOneIncompleteList(user2Incomplete, compareData.titlePref),
         bothIncomplete: self.processBothIncompleteList(bothIncomplete, compareData.titlePref),
+
+        notInUser1: self.processNotInList(notInUser1, compareData.titlePref),
+        notInUser2: self.processNotInList(notInUser2, compareData.titlePref),
 
         compat: self.getCompatStyle(
           self.calculateCompatibility(bothRated)

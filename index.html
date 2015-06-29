@@ -170,6 +170,56 @@
             </tbody>
         </table>
         {{/if}}
+        {{#if notInUser1}}
+        <h3 class="tac">{{type}} not in {{user1}} list</h3>
+        <table class="pure-table pure-table-striped sortable" id="tblNotInUser1">
+            <thead>
+                <th>Title</th>
+                <th>{{user2}} status</th>
+                {{#if isManga}}
+                    <th>Chapters Read</th>
+                {{else}}
+                    <th>Episodes Watched</th>
+                {{/if}}
+                <th>{{user2}} rating</th>
+            </thead>
+            <tbody>
+                {{#each notInUser1}}
+                <tr>
+                    <td><a href="{{url}}" target="_blank">{{title}}</a></td>
+                    <td>{{status}}</td>
+                    <td sorttable_customkey="{{epsWatchedSort}}">{{epswatched}}</td>
+                    <td>{{rating}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        {{/if}}
+        {{#if notInUser2}}
+        <h3 class="tac">{{type}} not in {{user2}} list</h3>
+        <table class="pure-table pure-table-striped sortable" id="tblNotInUser2">
+            <thead>
+                <th>Title</th>
+                <th>{{user1}} status</th>
+                {{#if isManga}}
+                    <th>Chapters Read</th>
+                {{else}}
+                    <th>Episodes Watched</th>
+                {{/if}}
+                <th>{{user1}} rating</th>
+            </thead>
+            <tbody>
+                {{#each notInUser2}}
+                <tr>
+                    <td><a href="{{url}}" target="_blank">{{title}}</a></td>
+                    <td>{{status}}</td>
+                    <td sorttable_customkey="{{epsWatchedSort}}">{{epswatched}}</td>
+                    <td>{{rating}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        {{/if}}
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/1.2.2/bluebird.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
