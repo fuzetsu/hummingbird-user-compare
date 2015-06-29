@@ -52,6 +52,7 @@
         <div class="tac compatibility" style="color: {{compat.color}}">
             {{compat.percent}}
         </div>
+        {{#if bothCompleted.rows}}
         <h3 class="tac">{{type}} Both Users Have Completed</h3>
         <table class="pure-table pure-table-striped sortable" id="tblCompleted">
             <thead>
@@ -83,6 +84,7 @@
             </tfoot>
             {{/with}}
         </table>
+        {{/if}}
         {{#if bothIncomplete}}
         <h3 class="tac">{{type}} Neither User Has Completed</h3>
         <table class="pure-table pure-table-striped sortable" id="tblBothIncomplete">
