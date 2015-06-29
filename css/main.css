@@ -39,6 +39,14 @@ body {
   cursor: pointer;
 }
 
+.output h3:before {
+  content: '\25BE  ';
+}
+
+.output h3.collapsed:before {
+  content: '\25B8  ';
+}
+
 @media only screen and (max-width: 592px) {
   .header {
     font-size: 1em;

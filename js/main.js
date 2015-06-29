@@ -502,6 +502,9 @@
         var target = evt.target;
         var sibling;
         if(target.tagName === 'H3') {
+          // toggle class on header
+          target.classList.toggle('collapsed');
+          // toggle visiblity of content
           sibling = target.nextSibling;
           while(sibling && sibling.nodeType === 3) sibling = sibling.nextSibling;
           if(sibling) sibling.style.display = sibling.style.display ? '' : 'none';
