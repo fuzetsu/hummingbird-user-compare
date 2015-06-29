@@ -498,6 +498,16 @@
         });
       });
 
+      self.outputDiv.addEventListener('click', function(evt) {
+        var target = evt.target;
+        var sibling;
+        if(target.tagName === 'H3') {
+          sibling = target.nextSibling;
+          while(sibling && sibling.nodeType === 3) sibling = sibling.nextSibling;
+          if(sibling) sibling.style.display = sibling.style.display ? '' : 'none';
+        }
+      });
+
     },
 
     toggleLoading: function(state) {

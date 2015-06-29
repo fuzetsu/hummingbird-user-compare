@@ -35,6 +35,10 @@ body {
   transition: 0.5s;
 }
 
+.output h3 {
+  cursor: pointer;
+}
+
 @media only screen and (max-width: 592px) {
   .header {
     font-size: 1em;
